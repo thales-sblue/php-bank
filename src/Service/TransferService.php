@@ -2,16 +2,19 @@
 
 require_once __DIR__ . '/../Model/Transfer.php';
 require_once __DIR__ . '/../Service/TransactionService.php';
+require_once __DIR__ . '/../Service/AccountService.php';
 
 class TransferService
 {
     private $transferModel;
     private $transactionService;
+    private $accountService;
 
     public function __construct()
     {
         $this->transferModel = new Transfer();
         $this->transactionService = new TransactionService();
+        $this->accountService = new AccountService();
     }
 
     public function createTransfer($fromAccountId, $toAccountId, $amount)
@@ -27,6 +30,13 @@ class TransferService
     {
         if (empty($fromAccountId) || empty($toAccountId) || empty($amount)) {
             throw new Exception("Campos obrigatórios não informados (fromAccountId/toAccountId/amount).");
+        }
+        if (!$this->accountService->getAccount($fromAccountId)) {
+            throw new Exception("Conta de origem não existe.");
+        }
+
+        if (!$this->accountService->getAccount($toAccountId)) {
+            throw new Exception("Conta de destino não existe.");
         }
 
         try {

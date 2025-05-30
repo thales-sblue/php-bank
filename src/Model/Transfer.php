@@ -22,7 +22,12 @@ class Transfer
         $status = 'pending';
         $stmt->bindParam(':status', $status);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            $id = $this->conn->lastInsertId();
+            return ['id' => $id, 'fromAccountId' => $fromAccountId, 'toAccountId' => $toAccountId, 'amount' => $amount];
+        }
+
+        return false;
     }
 
     public function getTransfersByAccount($accountId)
@@ -44,10 +49,13 @@ class Transfer
 
     public function updateTransferStatus($id, $status)
     {
-        $query = "UPDATE transfer SET status = :status WHERE id = :id";
+        $query = "UPDATE transfer SET status = :status, executed_at = :executedAt WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':id', $id);
+        $executedAt = date('Y-m-d H:i:s');
+        $stmt->bindParam(':executedAt', $executedAt);
+
         return $stmt->execute();
     }
 }

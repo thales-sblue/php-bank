@@ -28,8 +28,9 @@ class AccountService
     {
         $account = $this->accountModel->getAccount($id);
         if (!$account) {
-            throw new Exception("Conta não encontrada.");
+            throw new Exception("Conta com ID {$id} não encontrada.");
         }
+
         return $account;
     }
 

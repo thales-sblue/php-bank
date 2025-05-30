@@ -3,6 +3,7 @@ require_once __DIR__ . '/../src/Database/Database.php';
 require_once __DIR__ . '/../src/Controller/ClientController.php';
 require_once __DIR__ . '/../src/Controller/AccountController.php';
 require_once __DIR__ . '/../src/Controller/TransactionController.php';
+require_once __DIR__ . '/../src/Controller/TransferController.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -58,6 +59,11 @@ switch ($route) {
 
     case 'transactions':
         $controller = new TransactionController();
+        $controller->handlerequest($_SERVER['REQUEST_METHOD'], $uri);
+        break;
+
+    case 'transfers':
+        $controller = new TransferController();
         $controller->handlerequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 

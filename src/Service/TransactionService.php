@@ -35,13 +35,14 @@ class TransactionService
 
     public function processTransferTransactions($transfer)
     {
-        if (empty($transfer) || !isset($transfer['fromAccountId'], $transfer['toAccountId'], $transfer['amount'])) {
-            throw new Exception("Transferência inválida.");
+        $fromAccountId = $transfer['fromAccountId'] ?? null;
+        $toAccountId   = $transfer['toAccountId'] ?? null;
+        $amount        = $transfer['amount'] ?? null;
+
+        if (!$fromAccountId || !$toAccountId || !$amount) {
+            throw new Exception("Transferência incompleta: campos obrigatórios ausentes.");
         }
 
-        $fromAccountId = $transfer['fromAccountId'];
-        $toAccountId = $transfer['toAccountId'];
-        $amount = $transfer['amount'];
 
         $this->createTransaction($fromAccountId, $amount, 'saque');
         $this->createTransaction($toAccountId, $amount, 'deposito');
