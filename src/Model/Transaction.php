@@ -11,14 +11,24 @@ class Transaction
         $this->conn = (new Database())->connect();
     }
 
-    public function createTransaction($accountId, $amount, $type)
+    public function createTransaction($accountId, $amount, $type, $transferId = null)
     {
-        $query = "INSERT INTO account_transaction (account_id, amount, type) 
+        if ($transferId !== null) {
+            $query = "INSERT INTO account_transaction (account_id, amount, type, transfer_id) 
+                  VALUES (:accountId, :amount, :type, :transferId)";
+        } else {
+            $query = "INSERT INTO account_transaction (account_id, amount, type) 
                   VALUES (:accountId, :amount, :type)";
+        }
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':accountId', $accountId);
         $stmt->bindParam(':amount', $amount);
         $stmt->bindParam(':type', $type);
+
+        if ($transferId !== null) {
+            $stmt->bindParam(':transferId', $transferId);
+        }
+
         return $stmt->execute();
     }
 

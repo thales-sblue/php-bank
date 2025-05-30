@@ -14,7 +14,7 @@ class TransactionService
         $this->accountService = new AccountService();
     }
 
-    public function createTransaction($accountId, $amount, $type)
+    public function createTransaction($accountId, $amount, $type, $transferId = null)
     {
         if (empty($accountId) || empty($amount) || empty($type)) {
             throw new Exception("Campos obrigatórios não informados (accountId/amount/type).");
@@ -30,22 +30,23 @@ class TransactionService
             throw new Exception("Erro ao atualizar saldo da conta.");
         }
 
-        return $this->transactionModel->createTransaction($accountId, $amount, $type);
+        return $this->transactionModel->createTransaction($accountId, $amount, $type, $transferId);
     }
 
     public function processTransferTransactions($transfer)
     {
+        $transferId     = $transfer['id'] ?? null;
         $fromAccountId = $transfer['fromAccountId'] ?? null;
         $toAccountId   = $transfer['toAccountId'] ?? null;
         $amount        = $transfer['amount'] ?? null;
 
-        if (!$fromAccountId || !$toAccountId || !$amount) {
+        if (!$fromAccountId || !$toAccountId || !$amount || !$transferId) {
             throw new Exception("Transferência incompleta: campos obrigatórios ausentes.");
         }
 
 
-        $this->createTransaction($fromAccountId, $amount, 'saque');
-        $this->createTransaction($toAccountId, $amount, 'deposito');
+        $this->createTransaction($fromAccountId, $amount, 'saque', $transferId);
+        $this->createTransaction($toAccountId, $amount, 'deposito',  $transferId);
     }
 
     public function getTransactionsByAccount($accountId)
