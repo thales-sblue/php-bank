@@ -33,6 +33,20 @@ class TransactionService
         return $this->transactionModel->createTransaction($accountId, $amount, $type);
     }
 
+    public function processTransferTransactions($transfer)
+    {
+        if (empty($transfer) || !isset($transfer['fromAccountId'], $transfer['toAccountId'], $transfer['amount'])) {
+            throw new Exception("Transferência inválida.");
+        }
+
+        $fromAccountId = $transfer['fromAccountId'];
+        $toAccountId = $transfer['toAccountId'];
+        $amount = $transfer['amount'];
+
+        $this->createTransaction($fromAccountId, $amount, 'saque');
+        $this->createTransaction($toAccountId, $amount, 'deposito');
+    }
+
     public function getTransactionsByAccount($accountId)
     {
         return $this->transactionModel->getTransactionsByAccount($accountId);

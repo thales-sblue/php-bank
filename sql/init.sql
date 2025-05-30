@@ -22,7 +22,7 @@ CREATE TABLE transfer (
   from_account_id  INT NOT NULL REFERENCES account(id) ON DELETE RESTRICT,
   to_account_id    INT NOT NULL REFERENCES account(id) ON DELETE RESTRICT,
   amount           NUMERIC(14,2) NOT NULL,
-  status           VARCHAR(20)   NOT NULL CHECK (status IN ('pending','completed','failed')),
+  status           VARCHAR(20)   NOT NULL CHECK (status IN ('pending','completed','failed')) DEFAULT 'pending',
   created_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   executed_at      TIMESTAMP     NULL
 );
