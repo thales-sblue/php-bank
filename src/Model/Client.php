@@ -18,7 +18,8 @@ class Client
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':password', password_hash($password, PASSWORD_DEFAULT));
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':cpfcnpj', $cpfcnpj);
         $stmt->bindParam(':email', $email);

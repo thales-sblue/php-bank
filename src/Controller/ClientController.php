@@ -42,7 +42,7 @@ class ClientController
                             $data['email']
                         );
                         http_response_code(201);
-                        echo json_encode(['message' => 'Usuário criado com sucesso'], JSON_UNESCAPED_UNICODE);
+                        echo json_encode(['message' => 'Cliente criado com sucesso'], JSON_UNESCAPED_UNICODE);
                     } else {
                         http_response_code(400);
                         echo json_encode(['error' => 'Dados obrigatórios ausentes'], JSON_UNESCAPED_UNICODE);
@@ -65,7 +65,7 @@ class ClientController
                                 $data['name'],
                                 $data['email']
                             );
-                            echo json_encode(['message' => 'Usuário atualizado com sucesso'], JSON_UNESCAPED_UNICODE);
+                            echo json_encode(['message' => 'Cliente atualizado com sucesso'], JSON_UNESCAPED_UNICODE);
                         } else {
                             http_response_code(400);
                             echo json_encode(['error' => 'Dados obrigatórios ausentes para atualização'], JSON_UNESCAPED_UNICODE);
@@ -76,7 +76,7 @@ class ClientController
                     }
                 } else {
                     http_response_code(400);
-                    echo json_encode(['error' => 'ID do usuário é obrigatório para atualização'], JSON_UNESCAPED_UNICODE);
+                    echo json_encode(['error' => 'ID do cliente é obrigatório para atualização'], JSON_UNESCAPED_UNICODE);
                 }
                 break;
 
