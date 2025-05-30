@@ -45,7 +45,8 @@ class Account
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':balance', $balance);
         $stmt->bindParam(':type', $type);
-        $stmt->bindParam(':active', $active);
+        $active = (bool)$active;
+        $stmt->bindParam(':active', $active, PDO::PARAM_BOOL);
         return $stmt->execute();
     }
 }

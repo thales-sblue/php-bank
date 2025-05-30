@@ -43,9 +43,9 @@ class AccountController
                         $data = json_decode(file_get_contents('php://input'), true);
                         $this->accountService->updateAccount(
                             $id,
-                            $data['balance'],
-                            $data['type'],
-                            $data['active'] ?? true
+                            $data['balance'] ?? null,
+                            $data['type'] ?? null,
+                            $data['active'] ?? null
                         );
                         echo json_encode(['message' => 'Conta atualizada com sucesso'], JSON_UNESCAPED_UNICODE);
                     } else {

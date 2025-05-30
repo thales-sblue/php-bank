@@ -38,11 +38,20 @@ class AccountService
         return $this->accountModel->getAllAccounts();
     }
 
-    public function updateAccount($id, $balance, $type, $active)
+    public function updateAccount($id, $balance = null, $type = null, $active = null)
     {
         $account = $this->accountModel->getAccount($id);
+
         if (!$account) {
             throw new Exception("Conta não encontrada para atualização.");
+        }
+
+        $balance = $balance !== null ? $balance : $account['balance'];
+        $type    = $type    !== null ? $type    : $account['type'];
+        $active  = $active  !== null ? (bool)$active : $account['active'];
+
+        if (!in_array($type, ['corrente', 'poupanca'])) {
+            throw new Exception("Tipo de conta inválido.");
         }
 
         return $this->accountModel->updateAccount($id, $balance, $type, $active);
