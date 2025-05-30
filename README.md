@@ -15,7 +15,7 @@
 
 - Cadastro de clientes
 - Criação de contas do tipo `corrente` ou `poupança`
-- Depósito e saque com atualização automática de saldo
+- Depósito, saque e transferências com atualização automática de saldo
 - Registro de transações e histórico
 - Registro de transferência entre contas
 - Validação de saldo para saques
