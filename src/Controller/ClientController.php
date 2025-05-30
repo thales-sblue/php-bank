@@ -1,5 +1,7 @@
 <?php
+
 require_once __DIR__ . '/../Service/ClientService.php';
+require_once __DIR__ . '/../Utils/Response.php';
 
 class ClientController
 {
@@ -10,80 +12,82 @@ class ClientController
         $this->clientService = new ClientService();
     }
 
-    public function handlerequest($method, $uri)
+    public function handleRequest($method, $uri)
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 
-        switch ($method) {
-            case 'GET':
-                try {
+        try {
+            switch ($method) {
+                case 'GET':
                     if ($id) {
                         $client = $this->clientService->getClient($id);
-                        echo json_encode($client, JSON_UNESCAPED_UNICODE);
+                        sendJson($client);
                     } else {
-                        $client = $this->clientService->getAllClients();
-                        echo json_encode($client, JSON_UNESCAPED_UNICODE);
+                        $clients = $this->clientService->getAllClients();
+                        sendJson($clients);
                     }
-                } catch (Exception $e) {
-                    http_response_code(404);
-                    echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                }
-                break;
+                    break;
 
-            case 'POST':
-                $data = json_decode(file_get_contents('php://input'), true);
-                try {
-                    if (isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
-                        $this->clientService->createClient(
-                            $data['username'],
-                            $data['password'],
-                            $data['name'],
-                            $data['cpfcnpj'],
-                            $data['email']
-                        );
-                        http_response_code(201);
-                        echo json_encode(['message' => 'Cliente criado com sucesso'], JSON_UNESCAPED_UNICODE);
-                    } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Dados obrigatórios ausentes'], JSON_UNESCAPED_UNICODE);
-                    }
-                } catch (Exception $e) {
-                    http_response_code(400);
-                    echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                }
-                break;
-
-            case 'PUT':
-                if ($id) {
+                case 'POST':
                     $data = json_decode(file_get_contents('php://input'), true);
-                    try {
-                        if (isset($data['username'], $data['password'], $data['name'], $data['email'])) {
-                            $this->clientService->updateClient(
-                                $id,
-                                $data['username'],
-                                $data['password'],
-                                $data['name'],
-                                $data['email']
-                            );
-                            echo json_encode(['message' => 'Cliente atualizado com sucesso'], JSON_UNESCAPED_UNICODE);
-                        } else {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Dados obrigatórios ausentes para atualização'], JSON_UNESCAPED_UNICODE);
-                        }
-                    } catch (Exception $e) {
-                        http_response_code(400);
-                        echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                    }
-                } else {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'ID do cliente é obrigatório para atualização'], JSON_UNESCAPED_UNICODE);
-                }
-                break;
 
-            default:
-                http_response_code(405);
-                echo json_encode(['error' => 'Método não permitido'], JSON_UNESCAPED_UNICODE);
-                break;
+                    if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
+                        sendError('Dados obrigatórios ausentes (username, password, name, cpfcnpj, email)', 400);
+                    }
+
+                    $client = $this->clientService->createClient(
+                        $data['username'],
+                        $data['password'],
+                        $data['name'],
+                        $data['cpfcnpj'],
+                        $data['email']
+                    );
+
+                    if (!$client) {
+                        sendError('Erro ao criar cliente.', 500);
+                    }
+
+                    sendJson([
+                        'message' => 'Cliente criado com sucesso',
+                        'client' => $client
+                    ], 201);
+                    break;
+
+                case 'PUT':
+                    if (!$id) {
+                        sendError('ID do cliente é obrigatório para atualização', 400);
+                    }
+
+                    $data = json_decode(file_get_contents('php://input'), true);
+
+                    if (!isset($data['username'], $data['password'], $data['name'], $data['email'])) {
+                        sendError('Dados obrigatórios ausentes para atualização (username, password, name, email)', 400);
+                    }
+
+                    $updated = $this->clientService->updateClient(
+                        $id,
+                        $data['username'],
+                        $data['password'],
+                        $data['name'],
+                        $data['email']
+                    );
+
+                    if (!$updated) {
+                        sendError("Erro ao atualizar cliente com ID $id", 500);
+                    }
+
+                    sendJson([
+                        'message' => 'Cliente atualizado com sucesso',
+                        'client' => $updated
+                    ]);
+                    break;
+
+                default:
+                    sendError('Método não permitido', 405);
+                    break;
+            }
+        } catch (Exception $e) {
+            sendError('Erro inesperado no servidor', 500, $e->getMessage());
         }
     }
 }

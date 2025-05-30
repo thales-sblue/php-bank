@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Service/TransferService.php';
+require_once __DIR__ . '/../Utils/Response.php';
 
 class TransferController
 {
@@ -11,43 +12,47 @@ class TransferController
         $this->transferService = new TransferService();
     }
 
-    public function handleRequest($method, $id = null)
+    public function handleRequest($method, $uri)
     {
-        switch ($method) {
-            case 'GET':
-                if ($id) {
-                    echo json_encode($this->transferService->getTransfersByAccount($id), JSON_UNESCAPED_UNICODE);
-                } else {
-                    echo json_encode($this->transferService->getAllTransfers(), JSON_UNESCAPED_UNICODE);
-                }
-                break;
+        $id = isset($uri[2]) ? (int)$uri[2] : null;
 
-            case 'POST':
-                $data = json_decode(file_get_contents('php://input'), true);
+        try {
+            switch ($method) {
+                case 'GET':
+                    if ($id) {
+                        $transfers = $this->transferService->getTransfersByAccount($id);
+                        sendJson($transfers);
+                    } else {
+                        $transfers = $this->transferService->getAllTransfers();
+                        sendJson($transfers);
+                    }
+                    break;
 
-                if (!isset($data['fromAccountId'], $data['toAccountId'], $data['amount'])) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Dados obrigatórios ausentes (fromAccountId, toAccountId, amount)'], JSON_UNESCAPED_UNICODE);
-                    return;
-                }
+                case 'POST':
+                    $data = json_decode(file_get_contents('php://input'), true);
 
-                try {
+                    if (!isset($data['fromAccountId'], $data['toAccountId'], $data['amount'])) {
+                        sendError('Dados obrigatórios ausentes (fromAccountId, toAccountId, amount)', 400);
+                    }
+
                     $transfer = $this->transferService->processTransfer(
                         $data['fromAccountId'],
                         $data['toAccountId'],
                         $data['amount']
                     );
-                    echo json_encode($transfer, JSON_UNESCAPED_UNICODE);
-                } catch (Exception $e) {
-                    http_response_code(500);
-                    echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                }
-                break;
 
-            default:
-                http_response_code(405);
-                echo json_encode(['error' => 'Método não permitido'], JSON_UNESCAPED_UNICODE);
-                break;
+                    sendJson([
+                        'message' => 'Transferência realizada com sucesso.',
+                        'transfer' => $transfer
+                    ], 201);
+                    break;
+
+                default:
+                    sendError('Método não permitido', 405);
+                    break;
+            }
+        } catch (Exception $e) {
+            sendError('Erro ao processar a transferência', 500, $e->getMessage());
         }
     }
 }

@@ -24,12 +24,17 @@ class Client
         $stmt->bindParam(':cpfcnpj', $cpfcnpj);
         $stmt->bindParam(':email', $email);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            $id = $this->conn->lastInsertId();
+            return $this->getClient($id);
+        }
+
+        return false;
     }
 
     public function getClient($id)
     {
-        $query = "SELECT * FROM client WHERE id = :id";
+        $query = "SELECT id, username, name, cpfcnpj, email FROM client WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -38,7 +43,7 @@ class Client
 
     public function getAllClients()
     {
-        $query = "SELECT * FROM client";
+        $query = "SELECT id, username, name, cpfcnpj, email FROM client";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -61,6 +66,10 @@ class Client
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return $this->getClient($id);
+        }
+
+        return false;
     }
 }

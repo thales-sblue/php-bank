@@ -24,10 +24,30 @@ class Transfer
 
         if ($stmt->execute()) {
             $id = $this->conn->lastInsertId();
-            return ['id' => $id, 'fromAccountId' => $fromAccountId, 'toAccountId' => $toAccountId, 'amount' => $amount];
+            return [
+                'id' => $id,
+                'fromAccountId' => $fromAccountId,
+                'toAccountId' => $toAccountId,
+                'amount' => $amount,
+                'status' => $status,
+                'created_at' => date('Y-m-d H:i:s'),
+                'executed_at' => null
+            ];
         }
 
         return false;
+    }
+
+    public function updateTransferStatus($id, $status)
+    {
+        $query = "UPDATE transfer SET status = :status, executed_at = :executedAt WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $executedAt = date('Y-m-d H:i:s');
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':executedAt', $executedAt);
+        $stmt->bindParam(':id', $id);
+
+        return $stmt->execute();
     }
 
     public function getTransfersByAccount($accountId)
@@ -47,15 +67,12 @@ class Transfer
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateTransferStatus($id, $status)
+    public function getTransferById($id)
     {
-        $query = "UPDATE transfer SET status = :status, executed_at = :executedAt WHERE id = :id";
+        $query = "SELECT * FROM transfer WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':status', $status);
         $stmt->bindParam(':id', $id);
-        $executedAt = date('Y-m-d H:i:s');
-        $stmt->bindParam(':executedAt', $executedAt);
-
-        return $stmt->execute();
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Service/AccountService.php';
+require_once __DIR__ . '/../Utils/Response.php';
 
 class AccountController
 {
@@ -20,49 +21,61 @@ class AccountController
                 case 'GET':
                     if ($id) {
                         $account = $this->accountService->getAccount($id);
-                        echo json_encode($account, JSON_UNESCAPED_UNICODE);
+                        sendJson($account);
                     } else {
                         $accounts = $this->accountService->getAllAccounts();
-                        echo json_encode($accounts, JSON_UNESCAPED_UNICODE);
+                        sendJson($accounts);
                     }
                     break;
 
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'), true);
-                    $this->accountService->createAccount(
+
+                    if (!isset($data['user_id'], $data['balance'], $data['type'])) {
+                        sendError('Dados obrigatórios ausentes (user_id, balance, type)', 400);
+                    }
+
+                    $account = $this->accountService->createAccount(
                         $data['user_id'],
                         $data['balance'],
                         $data['type']
                     );
-                    http_response_code(201);
-                    echo json_encode(['message' => 'Conta criada com sucesso'], JSON_UNESCAPED_UNICODE);
+
+                    if (!$account) {
+                        sendError('Erro ao criar a conta.', 500);
+                    }
+
+                    sendJson([
+                        'message' => 'Conta criada com sucesso',
+                        'account' => $account
+                    ], 201);
                     break;
 
                 case 'PUT':
-                    if ($id) {
-                        $data = json_decode(file_get_contents('php://input'), true);
-                        $this->accountService->updateAccount(
-                            $id,
-                            $data['balance'] ?? null,
-                            $data['type'] ?? null,
-                            $data['active'] ?? null
-                        );
-                        echo json_encode(['message' => 'Conta atualizada com sucesso'], JSON_UNESCAPED_UNICODE);
-                    } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'ID da conta é obrigatório para atualizar'], JSON_UNESCAPED_UNICODE);
+                    if (!$id) {
+                        sendError('ID da conta é obrigatório para atualizar', 400);
                     }
-                    break;
 
+                    $data = json_decode(file_get_contents('php://input'), true);
+
+                    $accountUpdated = $this->accountService->updateAccount(
+                        $id,
+                        $data['balance'] ?? null,
+                        $data['type'] ?? null,
+                        $data['active'] ?? null
+                    );
+
+                    sendJson([
+                        'message' => 'Conta atualizada com sucesso',
+                        'account' => $accountUpdated
+                    ], 200);
+                    break;
 
                 default:
-                    http_response_code(405);
-                    echo json_encode(['error' => 'Método não permitido'], JSON_UNESCAPED_UNICODE);
-                    break;
+                    sendError('Método não permitido', 405);
             }
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+            sendError('Erro interno ao processar a requisição', 500, $e->getMessage());
         }
     }
 }

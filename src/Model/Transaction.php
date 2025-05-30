@@ -20,6 +20,7 @@ class Transaction
             $query = "INSERT INTO account_transaction (account_id, amount, type) 
                   VALUES (:accountId, :amount, :type)";
         }
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':accountId', $accountId);
         $stmt->bindParam(':amount', $amount);
@@ -29,7 +30,19 @@ class Transaction
             $stmt->bindParam(':transferId', $transferId);
         }
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            $id = $this->conn->lastInsertId();
+            return [
+                'id' => $id,
+                'account_id' => $accountId,
+                'amount' => $amount,
+                'type' => $type,
+                'transfer_id' => $transferId,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        return false;
     }
 
     public function getTransactionsByAccount($accountId)

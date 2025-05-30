@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Service/TransactionService.php';
+require_once __DIR__ . '/../Utils/Response.php';
 
 class TransactionController
 {
@@ -14,35 +15,46 @@ class TransactionController
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 
-        switch ($method) {
-            case 'GET':
-                try {
+        try {
+            switch ($method) {
+                case 'GET':
                     if ($id) {
                         $transaction = $this->transactionService->getTransactionsByAccount($id);
-                        echo json_encode($transaction, JSON_UNESCAPED_UNICODE);
+                        sendJson($transaction);
                     } else {
                         $transaction = $this->transactionService->getAllTransactions();
-                        echo json_encode($transaction, JSON_UNESCAPED_UNICODE);
+                        sendJson($transaction);
                     }
-                } catch (Exception $e) {
-                    http_response_code(404);
-                    echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                }
-                break;
+                    break;
 
-            case 'POST':
-                try {
+                case 'POST':
                     $data = json_decode(file_get_contents('php://input'), true);
+
                     if (empty($data['accountId']) || empty($data['amount']) || empty($data['type'])) {
-                        throw new Exception("Campos obrigatórios não informados (accountId/amount/type).");
+                        sendError("Campos obrigatórios não informados (accountId/amount/type).", 400);
                     }
-                    $transaction = $this->transactionService->createTransaction($data['accountId'], $data['amount'], $data['type']);
-                    http_response_code(201);
-                    echo json_encode(['message' => 'Transação efetivada com sucesso.'], JSON_UNESCAPED_UNICODE);
-                } catch (Exception $e) {
-                    http_response_code(400);
-                    echo json_encode(['error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-                }
+
+                    $transaction = $this->transactionService->createTransaction(
+                        $data['accountId'],
+                        $data['amount'],
+                        $data['type']
+                    );
+
+                    if (!$transaction) {
+                        sendError('Erro ao criar a transação.', 500);
+                    }
+
+                    sendJson([
+                        'message' => 'Transação efetivada com sucesso.',
+                        'transaction' => $transaction
+                    ], 201);
+                    break;
+
+                default:
+                    sendError('Método não permitido', 405);
+            }
+        } catch (Exception $e) {
+            sendError('Erro interno no servidor', 500, $e->getMessage());
         }
     }
 }

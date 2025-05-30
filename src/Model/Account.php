@@ -18,7 +18,13 @@ class Account
         $stmt->bindParam(':clientId', $clientId);
         $stmt->bindParam(':balance', $balance);
         $stmt->bindParam(':type', $type);
-        return $stmt->execute();
+
+        if ($stmt->execute()) {
+            $id = $this->conn->lastInsertId();
+            return $this->getAccount($id);
+        }
+
+        return false;
     }
 
     public function getAccount($id)
@@ -47,7 +53,12 @@ class Account
         $stmt->bindParam(':type', $type);
         $active = (bool)$active;
         $stmt->bindParam(':active', $active, PDO::PARAM_BOOL);
-        return $stmt->execute();
+
+        if ($stmt->execute()) {
+            return $this->getAccount($id);
+        }
+
+        return false;
     }
 
     public function applyTransactionAmount($accountId, $amount)
@@ -56,6 +67,11 @@ class Account
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':amount', $amount);
         $stmt->bindParam(':id', $accountId);
-        return $stmt->execute();
+
+        if ($stmt->execute()) {
+            return $this->getAccount($accountId);
+        }
+
+        return false;
     }
 }
