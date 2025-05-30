@@ -42,3 +42,11 @@ cd php-banking-api
 
 # Suba os containers
 docker-compose up --build
+
+---
+
+## 📌 TODO
+- Implementar autenticação JWT para proteger rotas e sessões
+- Incluir middlewares para validação e autenticação
+- Adicionar testes unitários com PHPUnit para garantir a qualidade do código
+- Documentar rotas com OpenAPI/Swagger
