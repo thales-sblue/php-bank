@@ -56,4 +56,36 @@ class AccountService
 
         return $this->accountModel->updateAccount($id, $balance, $type, $active);
     }
+
+    public function processTransaction($accountId, $amount, $type)
+    {
+        if (empty($accountId) || empty($amount) || empty($type)) {
+            throw new Exception("Campos obrigatórios não informados.");
+        }
+
+        if (!in_array($type, ['deposito', 'saque'])) {
+            throw new Exception("Tipo inválido.");
+        }
+
+        $account = $this->getAccount($accountId);
+        if (!$account) {
+            throw new Exception("Conta não encontrada.");
+        }
+
+        if (!$account['active']) {
+            throw new Exception("Conta inativa.");
+        }
+
+        if (!is_numeric($amount) || $amount <= 0) {
+            throw new Exception("Valor inválido.");
+        }
+
+        if ($type === 'saque' && $amount > $account['balance']) {
+            throw new Exception("Saldo insuficiente.");
+        }
+
+        $amount = $type === 'saque' ? -abs($amount) : abs($amount);
+
+        return $this->accountModel->applyTransactionAmount($accountId, $amount);
+    }
 }

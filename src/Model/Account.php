@@ -49,4 +49,13 @@ class Account
         $stmt->bindParam(':active', $active, PDO::PARAM_BOOL);
         return $stmt->execute();
     }
+
+    public function applyTransactionAmount($accountId, $amount)
+    {
+        $query = "UPDATE account SET balance = balance + :amount WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':amount', $amount);
+        $stmt->bindParam(':id', $accountId);
+        return $stmt->execute();
+    }
 }
