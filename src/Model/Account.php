@@ -11,11 +11,11 @@ class Account
         $this->conn = (new Database())->connect();
     }
 
-    public function createAccount($userId, $balance, $type)
+    public function createAccount($clientId, $balance, $type)
     {
-        $query = "INSERT INTO account (userId, balance, type) VALUES (:userId, :balance, :type)";
+        $query = "INSERT INTO account (client_id, balance, type) VALUES (:clientId, :balance, :type)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':clientId', $clientId);
         $stmt->bindParam(':balance', $balance);
         $stmt->bindParam(':type', $type);
         return $stmt->execute();

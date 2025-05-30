@@ -11,17 +11,17 @@ class AccountService
         $this->accountModel = new Account();
     }
 
-    public function createAccount($userId, $balance, $type)
+    public function createAccount($clientId, $balance, $type)
     {
-        if (empty($userId) || empty($type)) {
-            throw new Exception("Campos obrigatórios não informados(userId/type).");
+        if (empty($clientId) || empty($type)) {
+            throw new Exception("Campos obrigatórios não informados(clientId/type).");
         }
 
         if (!in_array($type, ['corrente', 'poupanca'])) {
             throw new Exception("Type inválido. Use 'corrente' ou 'poupanca'.");
         }
 
-        return $this->accountModel->createAccount($userId, $balance, $type);
+        return $this->accountModel->createAccount($clientId, $balance, $type);
     }
 
     public function getAccount($id)
