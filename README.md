@@ -48,6 +48,3 @@ cd php-banking-api
 
 # Suba os containers
 docker-compose up --build
-
----
-
