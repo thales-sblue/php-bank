@@ -21,6 +21,11 @@ class AccountService
             throw new Exception("Type inválido. Use 'corrente' ou 'poupanca'.");
         }
 
+        $accountExists = $this->accountModel->getAccountByClientId($clientId, $type);
+        if ($accountExists) {
+            throw new Exception("Já existe uma conta do tipo {$type} para o cliente com ID {$clientId}.");
+        }
+
         return $this->accountModel->createAccount($clientId, $balance, $type);
     }
 

@@ -27,6 +27,22 @@ class Account
         return false;
     }
 
+    public function getAccountByClientId($clientId, $type = null)
+    {
+        if ($type) {
+            $query = "SELECT * FROM account WHERE client_id = :clientId AND type = :type";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':type', $type);
+        } else {
+            $query = "SELECT * FROM account WHERE client_id = :clientId";
+            $stmt = $this->conn->prepare($query);
+        }
+
+        $stmt->bindParam(':clientId', $clientId);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getAccount($id)
     {
         $query = "SELECT * FROM account WHERE id = :id";
