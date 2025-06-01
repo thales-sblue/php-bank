@@ -1,9 +1,13 @@
 <?php
-require_once __DIR__ . '/../src/Database/Database.php';
-require_once __DIR__ . '/../src/Controller/ClientController.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../src/Controller/AccountController.php';
 require_once __DIR__ . '/../src/Controller/TransactionController.php';
 require_once __DIR__ . '/../src/Controller/TransferController.php';
+
+use Thales\PhpBanking\Controller\ClientController;
+use Thales\PhpBanking\Model\Client\ClientRepository;
+use Thales\PhpBanking\Service\ClientService;
+use Thales\PhpBanking\Database\Database;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -48,7 +52,9 @@ $route = $uri[1] ?? '';
 
 switch ($route) {
     case 'clients':
-        $controller = new ClientController();
+        $repository = new ClientRepository();
+        $service = new ClientService($repository);
+        $controller = new ClientController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
@@ -59,12 +65,12 @@ switch ($route) {
 
     case 'transactions':
         $controller = new TransactionController();
-        $controller->handlerequest($_SERVER['REQUEST_METHOD'], $uri);
+        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
     case 'transfers':
         $controller = new TransferController();
-        $controller->handlerequest($_SERVER['REQUEST_METHOD'], $uri);
+        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
     default:

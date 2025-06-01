@@ -1,14 +1,20 @@
 <?php
 
-require_once __DIR__ . '/../Model/Client.php';
+
+namespace Thales\PhpBanking\Service;
+
+use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
+use PDOException;
+use Exception;
+
 
 class ClientService
 {
-    private $clientModel;
+    private $clientRepository;
 
-    public function __construct()
+    public function __construct(ClientRepositoryInterface $clientRepository)
     {
-        $this->clientModel = new Client();
+        $this->clientRepository = $clientRepository;
     }
 
     public function createClient($username, $password, $name, $cpfcnpj, $email)
@@ -26,7 +32,7 @@ class ClientService
         }
 
         try {
-            return $this->clientModel->createClient($username, $password, $name, $cpfcnpj, $email);
+            return $this->clientRepository->createClient($username, $password, $name, $cpfcnpj, $email);
         } catch (PDOException $e) {
             if ($e->getCode() === '23505') { // erro de violação de UNIQUE no PostgreSQL
                 throw new Exception("Já existe um usuário com dados únicos conflitantes.");
@@ -38,7 +44,7 @@ class ClientService
 
     public function getClient($id)
     {
-        $client = $this->clientModel->getClient($id);
+        $client = $this->clientRepository->getClient($id);
         if (!$client) {
             throw new Exception("Usuário não encontrado.");
         }
@@ -47,12 +53,12 @@ class ClientService
 
     public function getAllClients()
     {
-        return $this->clientModel->getAllClients();
+        return $this->clientRepository->getAllClients();
     }
 
     public function updateClient($id, $username, $password, $name, $email)
     {
-        $client = $this->clientModel->getClient($id);
+        $client = $this->clientRepository->getClient($id);
         if (!$client) {
             throw new Exception("Usuário não encontrado para atualização.");
         }
@@ -61,6 +67,6 @@ class ClientService
             throw new Exception("Email inválido.");
         }
 
-        return $this->clientModel->updateClient($id, $username, $password, $name, $email);
+        return $this->clientRepository->updateClient($id, $username, $password, $name, $email);
     }
 }

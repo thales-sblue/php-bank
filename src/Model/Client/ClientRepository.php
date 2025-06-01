@@ -1,8 +1,13 @@
 <?php
 
-require_once __DIR__ . '/../Database/Database.php';
+namespace Thales\PhpBanking\Model\Client;
 
-class Client
+use Thales\PhpBanking\Database\Database;
+use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
+use PDO;
+use PDOException;
+
+class ClientRepository implements ClientRepositoryInterface
 {
     private $conn;
 

@@ -1,4 +1,10 @@
 <?php
+
+namespace Thales\PhpBanking\Database;
+
+use PDO;
+use PDOException;
+
 class Database
 {
     private $host = 'db';

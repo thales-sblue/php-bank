@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"Thales\\PhpBanking\\Tests\\Service\\ClientServiceTest::testGetClientReturnsClientWhenExists":0.009,"Thales\\PhpBanking\\Tests\\Service\\ClientServiceTest::testGetClientThrowsExceptionWhenNotFound":0.002}}

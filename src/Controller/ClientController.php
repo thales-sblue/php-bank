@@ -1,15 +1,17 @@
 <?php
 
-require_once __DIR__ . '/../Service/ClientService.php';
-require_once __DIR__ . '/../Utils/Response.php';
+namespace Thales\PhpBanking\Controller;
+
+use Thales\PhpBanking\Service\ClientService;
+use Exception;
 
 class ClientController
 {
-    private $clientService;
+    private ClientService $clientService;
 
-    public function __construct()
+    public function __construct(ClientService $clientService)
     {
-        $this->clientService = new ClientService();
+        $this->clientService = $clientService;
     }
 
     public function handleRequest($method, $uri)

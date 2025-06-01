@@ -1,0 +1,22 @@
+{
+    "name": "thales/php-banking",
+    "autoload": {
+        "psr-4": {
+            "Thales\\PhpBanking\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Thales\\PhpBanking\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "thales-sblue",
+            "email": "thales_sblue@hotmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.1"
+    }
+}
