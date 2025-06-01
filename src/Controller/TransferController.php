@@ -1,18 +1,21 @@
 <?php
 
-require_once __DIR__ . '/../Service/TransferService.php';
-require_once __DIR__ . '/../Utils/Response.php';
+namespace Thales\PhpBanking\Controller;
+
+use Thales\PhpBanking\Service\TransferService;
+use Thales\PhpBanking\Utils\Response;
+use Exception;
 
 class TransferController
 {
-    private $transferService;
+    private TransferService $transferService;
 
-    public function __construct()
+    public function __construct(TransferService $transferService)
     {
-        $this->transferService = new TransferService();
+        $this->transferService = $transferService;
     }
 
-    public function handleRequest($method, $uri)
+    public function handleRequest(string $method, array $uri): void
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 
@@ -21,10 +24,10 @@ class TransferController
                 case 'GET':
                     if ($id) {
                         $transfers = $this->transferService->getTransfersByAccount($id);
-                        sendJson($transfers);
+                        Response::sendJson($transfers);
                     } else {
                         $transfers = $this->transferService->getAllTransfers();
-                        sendJson($transfers);
+                        Response::sendJson($transfers);
                     }
                     break;
 
@@ -32,7 +35,7 @@ class TransferController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (!isset($data['fromAccountId'], $data['toAccountId'], $data['amount'])) {
-                        sendError('Dados obrigatórios ausentes (fromAccountId, toAccountId, amount)', 400);
+                        Response::sendError('Dados obrigatórios ausentes (fromAccountId, toAccountId, amount)', 400);
                     }
 
                     $transfer = $this->transferService->processTransfer(
@@ -41,18 +44,18 @@ class TransferController
                         $data['amount']
                     );
 
-                    sendJson([
+                    Response::sendJson([
                         'message' => 'Transferência realizada com sucesso.',
                         'transfer' => $transfer
                     ], 201);
                     break;
 
                 default:
-                    sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido', 405);
                     break;
             }
         } catch (Exception $e) {
-            sendError('Erro ao processar a transferência', 500, $e->getMessage());
+            Response::sendError('Erro ao processar a transferência', 500, $e->getMessage());
         }
     }
 }

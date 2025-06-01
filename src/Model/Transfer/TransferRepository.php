@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../Database/Database.php';
+namespace Thales\PhpBanking\Model\Transfer;
 
-class Transfer
+use Thales\PhpBanking\Database\Database;
+use PDO;
+
+class TransferRepository implements TransferRepositoryInterface
 {
     private $conn;
 
