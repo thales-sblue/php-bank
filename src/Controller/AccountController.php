@@ -3,6 +3,7 @@
 namespace Thales\PhpBanking\Controller;
 
 use Thales\PhpBanking\Service\AccountService;
+use Thales\PhpBanking\Utils\Response;
 use Exception;
 
 class AccountController
@@ -23,10 +24,10 @@ class AccountController
                 case 'GET':
                     if ($id) {
                         $account = $this->accountService->getAccount($id);
-                        sendJson($account);
+                        Response::sendJson($account);
                     } else {
                         $accounts = $this->accountService->getAllAccounts();
-                        sendJson($accounts);
+                        Response::sendJson($accounts);
                     }
                     break;
 
@@ -34,7 +35,7 @@ class AccountController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (!isset($data['user_id'], $data['balance'], $data['type'])) {
-                        sendError('Dados obrigatórios ausentes (user_id, balance, type)', 400);
+                        Response::sendError('Dados obrigatórios ausentes (user_id, balance, type)', 400);
                     }
 
                     $account = $this->accountService->createAccount(
@@ -44,10 +45,10 @@ class AccountController
                     );
 
                     if (!$account) {
-                        sendError('Erro ao criar a conta.', 500);
+                        Response::sendError('Erro ao criar a conta.', 500);
                     }
 
-                    sendJson([
+                    Response::sendJson([
                         'message' => 'Conta criada com sucesso',
                         'account' => $account
                     ], 201);
@@ -55,7 +56,7 @@ class AccountController
 
                 case 'PUT':
                     if (!$id) {
-                        sendError('ID da conta é obrigatório para atualizar', 400);
+                        Response::sendError('ID da conta é obrigatório para atualizar', 400);
                     }
 
                     $data = json_decode(file_get_contents('php://input'), true);
@@ -67,17 +68,17 @@ class AccountController
                         $data['active'] ?? null
                     );
 
-                    sendJson([
+                    Response::sendJson([
                         'message' => 'Conta atualizada com sucesso',
                         'account' => $accountUpdated
                     ], 200);
                     break;
 
                 default:
-                    sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido', 405);
             }
         } catch (Exception $e) {
-            sendError('Erro interno ao processar a requisição', 500, $e->getMessage());
+            Response::sendError('Erro interno ao processar a requisição', 500, $e->getMessage());
         }
     }
 }

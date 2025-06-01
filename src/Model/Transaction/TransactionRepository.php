@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../Database/Database.php';
+namespace Thales\PhpBanking\Model\Transaction;
 
-class Transaction
+use Thales\PhpBanking\Database\Database;
+use PDO;
+
+class TransactionRepository implements TransactionRepositoryInterface
 {
     private $conn;
 

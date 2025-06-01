@@ -1,17 +1,21 @@
 <?php
-require_once __DIR__ . '/../Service/TransactionService.php';
-require_once __DIR__ . '/../Utils/Response.php';
+
+namespace Thales\PhpBanking\Controller;
+
+use Thales\PhpBanking\Service\TransactionService;
+use Thales\PhpBanking\Utils\Response;
+use Exception;
 
 class TransactionController
 {
-    private $transactionService;
+    private TransactionService $transactionService;
 
-    public function __construct()
+    public function __construct(TransactionService $transactionService)
     {
-        $this->transactionService = new TransactionService();
+        $this->transactionService = $transactionService;
     }
 
-    public function handlerequest($method, $uri)
+    public function handleRequest(string $method, array $uri): void
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 
@@ -20,10 +24,10 @@ class TransactionController
                 case 'GET':
                     if ($id) {
                         $transaction = $this->transactionService->getTransactionsByAccount($id);
-                        sendJson($transaction);
+                        Response::sendJson($transaction);
                     } else {
                         $transaction = $this->transactionService->getAllTransactions();
-                        sendJson($transaction);
+                        Response::sendJson($transaction);
                     }
                     break;
 
@@ -31,7 +35,7 @@ class TransactionController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (empty($data['accountId']) || empty($data['amount']) || empty($data['type'])) {
-                        sendError("Campos obrigatórios não informados (accountId/amount/type).", 400);
+                        Response::sendError("Campos obrigatórios não informados (accountId/amount/type).", 400);
                     }
 
                     $transaction = $this->transactionService->createTransaction(
@@ -41,20 +45,20 @@ class TransactionController
                     );
 
                     if (!$transaction) {
-                        sendError('Erro ao criar a transação.', 500);
+                        Response::sendError('Erro ao criar a transação.', 500);
                     }
 
-                    sendJson([
+                    Response::sendJson([
                         'message' => 'Transação efetivada com sucesso.',
                         'transaction' => $transaction
                     ], 201);
                     break;
 
                 default:
-                    sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido', 405);
             }
         } catch (Exception $e) {
-            sendError('Erro interno no servidor', 500, $e->getMessage());
+            Response::sendError('Erro interno no servidor', 500, $e->getMessage());
         }
     }
 }

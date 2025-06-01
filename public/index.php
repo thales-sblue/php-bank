@@ -6,9 +6,15 @@ require_once __DIR__ . '/../src/Controller/TransferController.php';
 use Thales\PhpBanking\Model\Account\AccountRepository;
 use Thales\PhpBanking\Service\AccountService;
 use Thales\PhpBanking\Controller\AccountController;
-use Thales\PhpBanking\Controller\ClientController;
+
 use Thales\PhpBanking\Model\Client\ClientRepository;
 use Thales\PhpBanking\Service\ClientService;
+use Thales\PhpBanking\Controller\ClientController;
+
+use Thales\PhpBanking\Model\Transaction\TransactionRepository;
+use Thales\PhpBanking\Service\TransactionService;
+use Thales\PhpBanking\Controller\TransactionController;
+
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -55,6 +61,7 @@ switch ($route) {
     case 'clients':
         $repository = new ClientRepository();
         $service = new ClientService($repository);
+
         $controller = new ClientController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
@@ -62,12 +69,19 @@ switch ($route) {
     case 'accounts':
         $repository = new AccountRepository();
         $service = new AccountService($repository);
+
         $controller = new AccountController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
     case 'transactions':
-        $controller = new TransactionController();
+        $accountRepository = new AccountRepository();
+        $accountService = new AccountService($accountRepository);
+
+        $transactionRepository = new TransactionRepository();
+        $transactionService = new TransactionService($transactionRepository, $accountService);
+
+        $controller = new TransactionController($transactionService);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 

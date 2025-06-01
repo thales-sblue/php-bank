@@ -1,17 +1,20 @@
 <?php
 
-require_once __DIR__ . '/../Model/Transaction.php';
-require_once __DIR__ . '/../Service/AccountService.php';
+namespace Thales\PhpBanking\Service;
+
+use Thales\PhpBanking\Model\Transaction\TransactionRepositoryInterface;
+use Thales\PhpBanking\Service\AccountService;
+use Exception;
 
 class TransactionService
 {
-    private $transactionModel;
+    private $transactionRepository;
     private $accountService;
 
-    public function __construct()
+    public function __construct(TransactionRepositoryInterface $transactionRepository, AccountService $accountService)
     {
-        $this->transactionModel = new Transaction();
-        $this->accountService = new AccountService();
+        $this->transactionRepository = $transactionRepository;
+        $this->accountService = $accountService;
     }
 
     public function createTransaction($accountId, $amount, $type, $transferId = null)
@@ -30,7 +33,7 @@ class TransactionService
             throw new Exception("Erro ao atualizar saldo da conta.");
         }
 
-        return $this->transactionModel->createTransaction($accountId, $amount, $type, $transferId);
+        return $this->transactionRepository->createTransaction($accountId, $amount, $type, $transferId);
     }
 
     public function processTransferTransactions($transfer)
@@ -51,11 +54,11 @@ class TransactionService
 
     public function getTransactionsByAccount($accountId)
     {
-        return $this->transactionModel->getTransactionsByAccount($accountId);
+        return $this->transactionRepository->getTransactionsByAccount($accountId);
     }
 
     public function getAllTransactions()
     {
-        return $this->transactionModel->getAllTransactions();
+        return $this->transactionRepository->getAllTransactions();
     }
 }

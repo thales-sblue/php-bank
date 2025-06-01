@@ -3,7 +3,6 @@
 namespace Thales\PhpBanking\Model\Client;
 
 use Thales\PhpBanking\Database\Database;
-use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
 use PDO;
 use PDOException;
 
