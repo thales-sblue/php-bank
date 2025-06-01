@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../Database/Database.php';
+namespace Thales\PhpBanking\Model\Account;
 
-class Account
+use Thales\PhpBanking\Database\Database;
+use PDO;
+
+class AccountRepository implements AccountRepositoryInterface
 {
     private $conn;
 

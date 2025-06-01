@@ -1,18 +1,20 @@
 <?php
 
-require_once __DIR__ . '/../Service/AccountService.php';
-require_once __DIR__ . '/../Utils/Response.php';
+namespace Thales\PhpBanking\Controller;
+
+use Thales\PhpBanking\Service\AccountService;
+use Exception;
 
 class AccountController
 {
-    private $accountService;
+    private AccountService $accountService;
 
-    public function __construct()
+    public function __construct(AccountService $accountService)
     {
-        $this->accountService = new AccountService();
+        $this->accountService = $accountService;
     }
 
-    public function handleRequest($method, $uri)
+    public function handleRequest($method, $uri): void
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 

@@ -1,14 +1,18 @@
 <?php
 
-require_once __DIR__ . '/../Model/Account.php';
+
+namespace Thales\PhpBanking\Service;
+
+use Thales\PhpBanking\Model\Account\AccountRepositoryInterface;
+use Exception;
 
 class AccountService
 {
-    private $accountModel;
+    private AccountRepositoryInterface $accountRepository;
 
-    public function __construct()
+    public function __construct(AccountRepositoryInterface $accountRepository)
     {
-        $this->accountModel = new Account();
+        $this->accountRepository = $accountRepository;
     }
 
     public function createAccount($clientId, $balance, $type)
@@ -21,17 +25,17 @@ class AccountService
             throw new Exception("Type inválido. Use 'corrente' ou 'poupanca'.");
         }
 
-        $accountExists = $this->accountModel->getAccountByClientId($clientId, $type);
+        $accountExists = $this->accountRepository->getAccountByClientId($clientId, $type);
         if ($accountExists) {
             throw new Exception("Já existe uma conta do tipo {$type} para o cliente com ID {$clientId}.");
         }
 
-        return $this->accountModel->createAccount($clientId, $balance, $type);
+        return $this->accountRepository->createAccount($clientId, $balance, $type);
     }
 
     public function getAccount($id)
     {
-        $account = $this->accountModel->getAccount($id);
+        $account = $this->accountRepository->getAccount($id);
         if (!$account) {
             throw new Exception("Conta com ID {$id} não encontrada.");
         }
@@ -41,12 +45,12 @@ class AccountService
 
     public function getAllAccounts()
     {
-        return $this->accountModel->getAllAccounts();
+        return $this->accountRepository->getAllAccounts();
     }
 
     public function updateAccount($id, $balance = null, $type = null, $active = null)
     {
-        $account = $this->accountModel->getAccount($id);
+        $account = $this->accountRepository->getAccount($id);
 
         if (!$account) {
             throw new Exception("Conta não encontrada para atualização.");
@@ -60,7 +64,7 @@ class AccountService
             throw new Exception("Tipo de conta inválido.");
         }
 
-        return $this->accountModel->updateAccount($id, $balance, $type, $active);
+        return $this->accountRepository->updateAccount($id, $balance, $type, $active);
     }
 
     public function processTransaction($accountId, $amount, $type)
@@ -92,6 +96,6 @@ class AccountService
 
         $amount = $type === 'saque' ? -abs($amount) : abs($amount);
 
-        return $this->accountModel->applyTransactionAmount($accountId, $amount);
+        return $this->accountRepository->applyTransactionAmount($accountId, $amount);
     }
 }

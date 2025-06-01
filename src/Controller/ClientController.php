@@ -14,7 +14,7 @@ class ClientController
         $this->clientService = $clientService;
     }
 
-    public function handleRequest($method, $uri)
+    public function handleRequest($method, $uri): void
     {
         $id = isset($uri[2]) ? (int)$uri[2] : null;
 

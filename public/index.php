@@ -1,13 +1,14 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/Controller/AccountController.php';
 require_once __DIR__ . '/../src/Controller/TransactionController.php';
 require_once __DIR__ . '/../src/Controller/TransferController.php';
 
+use Thales\PhpBanking\Model\Account\AccountRepository;
+use Thales\PhpBanking\Service\AccountService;
+use Thales\PhpBanking\Controller\AccountController;
 use Thales\PhpBanking\Controller\ClientController;
 use Thales\PhpBanking\Model\Client\ClientRepository;
 use Thales\PhpBanking\Service\ClientService;
-use Thales\PhpBanking\Database\Database;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -59,7 +60,9 @@ switch ($route) {
         break;
 
     case 'accounts':
-        $controller = new AccountController();
+        $repository = new AccountRepository();
+        $service = new AccountService($repository);
+        $controller = new AccountController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
