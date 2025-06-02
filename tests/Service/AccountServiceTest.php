@@ -6,13 +6,13 @@ use Thales\PhpBanking\Model\Account\AccountRepositoryInterface;
 
 class AccountServiceTest extends TestCase
 {
-    private $mockRepository;
+    private $clientRepositoryMock;
     private $accountService;
 
     protected function setUp(): void
     {
-        $this->mockRepository = $this->createMock(AccountRepositoryInterface::class);
-        $this->accountService = new AccountService($this->mockRepository);
+        $this->clientRepositoryMock = $this->createMock(AccountRepositoryInterface::class);
+        $this->accountService = new AccountService($this->clientRepositoryMock);
     }
 
     public function testCreateAccountSuccess()
@@ -21,8 +21,8 @@ class AccountServiceTest extends TestCase
         $balance = 1000.00;
         $type = 'corrente';
 
-        $this->mockRepository->method('getAccountByClientId')->willReturn(null);
-        $this->mockRepository->method('createAccount')->willReturn([
+        $this->clientRepositoryMock->method('getAccountByClientId')->willReturn(null);
+        $this->clientRepositoryMock->method('createAccount')->willReturn([
             'id' => 1,
             'client_id' => $clientId,
             'balance' => $balance,
@@ -45,7 +45,7 @@ class AccountServiceTest extends TestCase
         $balance = 100;
         $type = 'corrente';
 
-        $this->mockRepository->method('getAccountByClientId')->willReturn(['existing' => true]);
+        $this->clientRepositoryMock->method('getAccountByClientId')->willReturn(['existing' => true]);
 
         $this->accountService->createAccount($clientId, $balance, $type);
     }
@@ -55,7 +55,7 @@ class AccountServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Conta com ID 1 não encontrada.");
 
-        $this->mockRepository->method('getAccount')->willReturn(false);
+        $this->clientRepositoryMock->method('getAccount')->willReturn(false);
 
         $this->accountService->getAccount(1);
     }
