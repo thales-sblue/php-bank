@@ -19,12 +19,13 @@
 - Registro de transações e histórico
 - Registro de transferência entre contas
 - Validação de saldo para saques
+- Testes unitários com PHPUnit para garantir a qualidade do código
 - Docker-ready para subir o ambiente com um comando
+
 
 ## 📌 TODO
 - Implementar autenticação JWT para proteger rotas e sessões
 - Incluir middlewares para validação e autenticação
-- Adicionar testes unitários com PHPUnit para garantir a qualidade do código
 - Documentar rotas com OpenAPI/Swagger
 
 ---
@@ -33,9 +34,10 @@
 
 - **PHP 8.3**
 - **PostgreSQL**
+- **PDO**
 - **Docker / Docker Compose**
 - **Apache**
-- **PDO**
+- **PHPUnit**
 
 ---
 
