@@ -32,6 +32,12 @@ class ClientController
                     } elseif ($action === 'login') {
                         header('Content-Type: text/html; charset=utf-8');
                         require __DIR__ . "/../View/Client/login.phtml";
+                    } elseif ($action === 'home') {
+                        $getClientAccounts = $this->clientService->getClientAccounts($id);
+                        Response::sendJson($getClientAccounts);
+                    } elseif ($action === 'auth') {
+                        header('Content-Type: text/html; charset=utf-8');
+                        require __DIR__ . "/../View/Client/home.phtml";
                     } else {
                         $clients = $this->clientService->getAllClients();
                         Response::sendJson($clients);

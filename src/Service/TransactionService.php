@@ -49,7 +49,7 @@ class TransactionService
 
 
         $this->createTransaction($fromAccountId, $amount, 'saque', $transferId);
-        $this->createTransaction($toAccountId, $amount, 'deposito',  $transferId);
+        $this->createTransaction($toAccountId, $amount, 'deposito', $transferId);
     }
 
     public function getTransactionsByAccount($accountId)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Thales\PhpBanking\Database;
+namespace Thales\PhpBanking\config\Database;
 
 use PDO;
 use PDOException;

@@ -2,7 +2,7 @@
 
 namespace Thales\PhpBanking\Model\Transfer;
 
-use Thales\PhpBanking\Database\Database;
+use Thales\PhpBanking\config\Database\Database;
 use PDO;
 
 class TransferRepository implements TransferRepositoryInterface

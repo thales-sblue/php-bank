@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Home - Painel do Usuário</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f1f1f1;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .dashboard {
+      background-color: #1e1e1e;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      width: 500px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .account {
+      background-color: #2a2a2a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .account h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    button, a.button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #0077ff;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover, a.button:hover {
+      background-color: #005ecc;
+    }
+
+    .logout {
+      display: block;
+      margin-top: 20px;
+      color: #ff5f5f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logout:hover {
+      color: #ff2f2f;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app" class="dashboard">
+  <h2>Bem-vindo, {{ user.name }}</h2>
+
+  <template v-if="accounts.length > 0">
+    <div v-for="account in accounts" :key="account.id" class="account">
+      <h3>Conta {{ account.type }}</h3>
+      <p><strong>Saldo:</strong> R$ {{ account.balance.toFixed(2) }}</p>
+    </div>
+
+    <div class="buttons">
+      <a href="/deposit" class="button">Depositar</a>
+      <a href="/withdraw" class="button">Sacar</a>
+      <a href="/transfer" class="button">Transferir</a>
+      <a href="/transactions" class="button">Extrato</a>
+    </div>
+  </template>
+
+  <template v-else>
+    <p>Você ainda não possui nenhuma conta ativa.</p>
+    <a href="/open-account" class="button">Abrir Conta</a>
+  </template>
+
+  <a href="/logout" class="logout">Sair</a>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      user: {
+        name: 'Carregando...'
+      },
+      accounts: []
+    }
+  },
+  methods: {
+    async fetchUserData() {
+      try {
+        const response = await fetch('/client/home');
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.error || 'Erro ao carregar dados');
+          window.location.href = '/login';
+          return;
+        }
+
+        this.user = data.user;
+        this.accounts = data.accounts;
+      } catch (err) {
+        alert('Erro ao carregar dados');
+        window.location.href = '/login';
+      }
+    }
+  },
+  mounted() {
+    this.fetchUserData();
+  }
+}).mount('#app');
+</script>
+
+</body>
+</html>

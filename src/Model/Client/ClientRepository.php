@@ -2,7 +2,7 @@
 
 namespace Thales\PhpBanking\Model\Client;
 
-use Thales\PhpBanking\Database\Database;
+use Thales\PhpBanking\config\Database\Database;
 use PDO;
 use PDOException;
 
@@ -82,5 +82,19 @@ class ClientRepository implements ClientRepositoryInterface
         }
 
         return false;
+    }
+
+    public function getClientAccounts($idClient)
+    {
+        $query = "SELECT cli.username, cli.name, cli.cpfcnpj, cli.email, acc.id, acc.balance, acc.type, acc.active
+                    FROM client cli
+                    JOIN account acc
+                    ON cli.id = acc.client_id
+                   WHERE cli.id = :idClient";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':idClient', $idClient);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

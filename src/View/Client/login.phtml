@@ -155,8 +155,7 @@
             const data = await response.json();
 
             if (response.ok) {
-              //redirect pos login
-              window.location.href = '/dashboard'; //rota pos login
+              window.location.href = '/clients/home';
             } else {
               this.error = data.error || 'Credenciais inválidas';
             }

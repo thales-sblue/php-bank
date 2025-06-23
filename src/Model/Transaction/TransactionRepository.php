@@ -2,7 +2,7 @@
 
 namespace Thales\PhpBanking\Model\Transaction;
 
-use Thales\PhpBanking\Database\Database;
+use Thales\PhpBanking\config\Database\Database;
 use PDO;
 
 class TransactionRepository implements TransactionRepositoryInterface

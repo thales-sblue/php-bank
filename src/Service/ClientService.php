@@ -87,6 +87,8 @@ class ClientService
             return;
         }
 
+        session_start();
+
         $_SESSION['client'] = [
             'id' => $client['id'],
             'username' => $client['username'],
@@ -102,5 +104,40 @@ class ClientService
         session_destroy();
         header('Location: /login');
         exit;
+    }
+
+    public function getClientAccounts()
+    {
+        $clientId = $_SESSION['client']['id'];
+        $results = $this->clientRepository->getClientAccounts($clientId);
+        $client = [
+            'username' => $results[0]['username'],
+            'name'     => $results[0]['name'],
+            'cpfcnpj'  => $results[0]['cpfcnpj'],
+            'email'    => $results[0]['email'],
+        ];
+
+        $accounts = [];
+
+        if (isset($results['id'])) {
+            foreach ($results as $row) {
+                $accounts[] = [
+                    'id'      => $row['id'],
+                    'balance' => (float)$row['balance'],
+                    'type'    => $row['type'],
+                    'active'  => (bool)$row['active'],
+                ];
+            }
+        }
+
+        $response = [
+            'client'   => $client,
+            'accounts' => $accounts
+        ];
+
+        if (!$response) {
+            throw new Exception("Usuário não possui conta criada.");
+        }
+        return $response;
     }
 }
