@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Thales\PhpBanking\Model\Account\AccountRepository;
@@ -31,7 +32,7 @@ set_exception_handler(function ($e) {
     exit;
 });
 
-set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+set_error_handler(function ($errstr, $errfile, $errline) {
     http_response_code(500);
     echo json_encode([
         'error' => 'Erro interno no servidor',
@@ -63,7 +64,6 @@ switch ($route) {
     case 'clients':
         $repository = new ClientRepository();
         $service = new ClientService($repository);
-
         $controller = new ClientController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;

@@ -17,10 +17,10 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function createTransaction($accountId, $amount, $type, $transferId = null)
     {
         if ($transferId !== null) {
-            $query = "INSERT INTO account_transaction (account_id, amount, type, transfer_id) 
+            $query = "INSERT INTO account_transaction (account_id, amount, type, transfer_id)
                   VALUES (:accountId, :amount, :type, :transferId)";
         } else {
-            $query = "INSERT INTO account_transaction (account_id, amount, type) 
+            $query = "INSERT INTO account_transaction (account_id, amount, type)
                   VALUES (:accountId, :amount, :type)";
         }
 

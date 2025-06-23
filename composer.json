@@ -2,7 +2,7 @@
     "name": "thales/php-banking",
     "autoload": {
         "psr-4": {
-            "Thales\\PhpBanking\\": "src/"
+            "Thales\\PhpBanking\\": ["src/", "config/"]
         }
     },
     "autoload-dev": {

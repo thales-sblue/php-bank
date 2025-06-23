@@ -16,7 +16,7 @@ class TransferRepository implements TransferRepositoryInterface
 
     public function createTransfer($fromAccountId, $toAccountId, $amount)
     {
-        $query = "INSERT INTO transfer (from_account_id, to_account_id, amount, status) 
+        $query = "INSERT INTO transfer (from_account_id, to_account_id, amount, status)
                   VALUES (:fromAccountId, :toAccountId, :amount, :status)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':fromAccountId', $fromAccountId);

@@ -55,7 +55,7 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function updateClient($id, $username, $password, $name, $email)
     {
-        $query = "UPDATE client 
+        $query = "UPDATE client
                   SET username = :username,
                       password = :password,
                       name = :name,

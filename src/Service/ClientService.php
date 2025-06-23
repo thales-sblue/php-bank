@@ -1,12 +1,10 @@
 <?php
 
-
 namespace Thales\PhpBanking\Service;
 
 use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
 use PDOException;
 use Exception;
-
 
 class ClientService
 {
