@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Cliente</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      width: 400px;
+      color: #f1f1f1;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #ffffff;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      margin-bottom: 18px;
+      transition: border-color 0.3s, background-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #0077ff;
+      outline: none;
+      background-color: #333;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #005ecc;
+    }
+
+    .success-message {
+      margin-top: 20px;
+      color: #4caf50;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="form-container">
+    <h2>Cadastro de Cliente</h2>
+
+    <form @submit.prevent="submitForm">
+      <label>Username:</label>
+      <input v-model="form.username" type="text" required>
+
+      <label>Senha:</label>
+      <input v-model="form.password" type="password" required>
+
+      <label>Nome:</label>
+      <input v-model="form.name" type="text" required>
+
+      <label>CPF/CNPJ:</label>
+      <input v-model="form.cpfcnpj" type="text" required>
+
+      <label>Email:</label>
+      <input v-model="form.email" type="email" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div v-if="success" class="success-message">
+      {{ success }}
+    </div>
+  </div>
+
+  <script>
+    const {
+      createApp
+    } = Vue;
+
+    createApp({
+      data() {
+        return {
+          form: {
+            username: '',
+            password: '',
+            name: '',
+            cpfcnpj: '',
+            email: ''
+          },
+          success: ''
+        }
+      },
+      methods: {
+        async submitForm() {
+          try {
+            const response = await fetch('/clients', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(this.form)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              this.success = data.message;
+              this.form = {
+                username: '',
+                password: '',
+                name: '',
+                cpfcnpj: '',
+                email: ''
+              };
+            } else {
+              alert(data.error || 'Erro ao cadastrar');
+            }
+          } catch (error) {
+            alert('Erro na requisição');
+          }
+        }
+      }
+    }).mount('#app');
+  </script>
+
+</body>
+
+</html>

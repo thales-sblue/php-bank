@@ -17,14 +17,21 @@ class ClientController
 
     public function handleRequest($method, $uri): void
     {
-        $id = isset($uri[2]) ? (int)$uri[2] : null;
-
+        $param = $uri[2] ?? null;
+        $id = (is_numeric($param)) ? (int)$param : null;
+        $action = (!is_numeric($param)) ? $param : null;
         try {
             switch ($method) {
                 case 'GET':
                     if ($id) {
                         $client = $this->clientService->getClient($id);
                         Response::sendJson($client);
+                    } elseif ($action === 'create') {
+                        header('Content-Type: text/html; charset=utf-8');
+                        require __DIR__ . "/../View/Client/create.phtml";
+                    } elseif ($action === 'login') {
+                        header('Content-Type: text/html; charset=utf-8');
+                        require __DIR__ . "/../View/Client/login.phtml";
                     } else {
                         $clients = $this->clientService->getAllClients();
                         Response::sendJson($clients);
@@ -34,26 +41,33 @@ class ClientController
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'), true);
 
-                    if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
-                        Response::sendError('Dados obrigatórios ausentes (username, password, name, cpfcnpj, email)', 400);
+                    if ($action == 'login') {
+                        $return = $this->clientService->login($data['username'], $data['password']);
+                    } else {
+                        if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
+                            Response::sendError(
+                                'Dados obrigatórios ausentes (username, password, name, cpfcnpj, email)',
+                                400
+                            );
+                        }
+
+                        $client = $this->clientService->createClient(
+                            $data['username'],
+                            $data['password'],
+                            $data['name'],
+                            $data['cpfcnpj'],
+                            $data['email']
+                        );
+
+                        if (!$client) {
+                            Response::sendError('Erro ao criar cliente.', 500);
+                        }
+
+                        Response::sendJson([
+                            'message' => 'Cliente criado com sucesso',
+                            'client' => $client
+                        ], 201);
                     }
-
-                    $client = $this->clientService->createClient(
-                        $data['username'],
-                        $data['password'],
-                        $data['name'],
-                        $data['cpfcnpj'],
-                        $data['email']
-                    );
-
-                    if (!$client) {
-                        Response::sendError('Erro ao criar cliente.', 500);
-                    }
-
-                    Response::sendJson([
-                        'message' => 'Cliente criado com sucesso',
-                        'client' => $client
-                    ], 201);
                     break;
 
                 case 'PUT':
@@ -64,7 +78,7 @@ class ClientController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (!isset($data['username'], $data['password'], $data['name'], $data['email'])) {
-                        Response::sendError('Dados obrigatórios ausentes para atualização (username, password, name, email)', 400);
+                        Response::sendError('Dados obrigatórios ausentes (username, password, name, email)', 400);
                     }
 
                     $updated = $this->clientService->updateClient(

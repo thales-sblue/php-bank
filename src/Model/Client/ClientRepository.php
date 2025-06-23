@@ -36,14 +36,21 @@ class ClientRepository implements ClientRepositoryInterface
         return false;
     }
 
-    public function getClient($id)
+    public function getClient($param)
     {
-        $query = "SELECT id, username, name, cpfcnpj, email FROM client WHERE id = :id";
+        if (is_numeric($param)) {
+            $query = "SELECT id, username, name, cpfcnpj, email FROM client WHERE id = :param";
+        } else {
+            $query = "SELECT id, username, name, password, cpfcnpj, email FROM client WHERE username = :param";
+        }
+
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':param', $param);
         $stmt->execute();
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     public function getAllClients()
     {

@@ -67,4 +67,40 @@ class ClientService
 
         return $this->clientRepository->updateClient($id, $username, $password, $name, $email);
     }
+
+    public function login(string $username = '', string $password = '')
+    {
+        if (!$username || !$password) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Username e senha são obrigatórios']);
+            return;
+        }
+
+        $client = $this->clientRepository->getClient($username);
+        if (!$client) {
+            throw new Exception("Usuário/senha incorretos.");
+        }
+
+        if (!$client || !password_verify($password, $client['password'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Usuário/senha incorretos']);
+            return;
+        }
+
+        $_SESSION['client'] = [
+            'id' => $client['id'],
+            'username' => $client['username'],
+            'name' => $client['name']
+        ];
+
+        echo json_encode(['message' => 'Login realizado com sucesso']);
+        return;
+    }
+
+    public function logout()
+    {
+        session_destroy();
+        header('Location: /login');
+        exit;
+    }
 }

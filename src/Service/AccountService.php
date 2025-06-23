@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Thales\PhpBanking\Service;
 
 use Thales\PhpBanking\Model\Account\AccountRepositoryInterface;

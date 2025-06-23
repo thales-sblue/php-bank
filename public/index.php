@@ -101,7 +101,13 @@ switch ($route) {
         break;
 
     default:
-        http_response_code(404);
-        echo json_encode(['error' => 'Not Found']);
+        $repository = new ClientRepository();
+        $service = new ClientService($repository);
+        $controller = new ClientController($service);
+        $uri = [];
+        $uri[0] = 'default';
+        $uri[1] = 'clients';
+        $uri[2] = 'login';
+        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 }
