@@ -33,8 +33,8 @@ class ClientController
                         header('Content-Type: text/html; charset=utf-8');
                         require __DIR__ . "/../View/Client/login.phtml";
                     } elseif ($action === 'home') {
-                        $getClientAccounts = $this->clientService->getClientAccounts($id);
-                        Response::sendJson($getClientAccounts);
+                        $data = $this->clientService->getClientAccounts();
+                        Response::sendJson($data, 200);
                     } elseif ($action === 'auth') {
                         header('Content-Type: text/html; charset=utf-8');
                         require __DIR__ . "/../View/Client/home.phtml";

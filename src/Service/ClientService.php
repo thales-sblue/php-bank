@@ -3,6 +3,7 @@
 namespace Thales\PhpBanking\Service;
 
 use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
+use Thales\PhpBanking\resources\Session;
 use PDOException;
 use Exception;
 
@@ -87,13 +88,12 @@ class ClientService
             return;
         }
 
-        session_start();
-
-        $_SESSION['client'] = [
+        Session::set('client', [
             'id' => $client['id'],
             'username' => $client['username'],
             'name' => $client['name']
-        ];
+        ]);
+
 
         echo json_encode(['message' => 'Login realizado com sucesso']);
         return;
@@ -101,24 +101,28 @@ class ClientService
 
     public function logout()
     {
-        session_destroy();
+        Session::destroy();
         header('Location: /login');
         exit;
     }
 
     public function getClientAccounts()
     {
-        $clientId = $_SESSION['client']['id'];
+        $client = Session::get('client');
+        if (!$client) {
+            logout();
+        }
+        $clientId = (int)$client['id'];
         $results = $this->clientRepository->getClientAccounts($clientId);
+
         $client = [
-            'username' => $results[0]['username'],
-            'name'     => $results[0]['name'],
-            'cpfcnpj'  => $results[0]['cpfcnpj'],
-            'email'    => $results[0]['email'],
+            'username' => $results['username'],
+            'name'     => $results['name'],
+            'cpfcnpj'  => $results['cpfcnpj'],
+            'email'    => $results['email'],
         ];
 
         $accounts = [];
-
         if (isset($results['id'])) {
             foreach ($results as $row) {
                 $accounts[] = [
@@ -131,13 +135,14 @@ class ClientService
         }
 
         $response = [
-            'client'   => $client,
-            'accounts' => $accounts
+            'client'   => $client ?? '',
+            'accounts' => $accounts ?? ''
         ];
 
         if (!$response) {
             throw new Exception("Usuário não possui conta criada.");
         }
+
         return $response;
     }
 }

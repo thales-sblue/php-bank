@@ -155,7 +155,7 @@
             const data = await response.json();
 
             if (response.ok) {
-              window.location.href = '/clients/home';
+              window.location.href = '/clients/auth';
             } else {
               this.error = data.error || 'Credenciais inválidas';
             }

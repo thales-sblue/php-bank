@@ -120,8 +120,9 @@ createApp({
   methods: {
     async fetchUserData() {
       try {
-        const response = await fetch('/client/home');
+        const response = await fetch('/clients/home');
         const data = await response.json();
+        console.log(data);
 
         if (!response.ok) {
           alert(data.error || 'Erro ao carregar dados');
@@ -129,7 +130,7 @@ createApp({
           return;
         }
 
-        this.user = data.user;
+        this.user = data.client;
         this.accounts = data.accounts;
       } catch (err) {
         alert('Erro ao carregar dados');

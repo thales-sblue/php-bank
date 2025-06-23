@@ -88,7 +88,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $query = "SELECT cli.username, cli.name, cli.cpfcnpj, cli.email, acc.id, acc.balance, acc.type, acc.active
                     FROM client cli
-                    JOIN account acc
+                    LEFT JOIN account acc
                     ON cli.id = acc.client_id
                    WHERE cli.id = :idClient";
         $stmt = $this->conn->prepare($query);
