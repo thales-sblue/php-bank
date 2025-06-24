@@ -1,6 +1,6 @@
 <?php
 
-namespace Thales\PhpBanking\Controller\Utils;
+namespace Thales\PhpBanking\resources;
 
 class Response
 {

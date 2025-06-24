@@ -3,7 +3,7 @@
 namespace Thales\PhpBanking\Controller;
 
 use Thales\PhpBanking\Service\AccountService;
-use Thales\PhpBanking\Controller\Utils\Response;
+use Thales\PhpBanking\resources\Response;
 use Thales\PhpBanking\resources\Session;
 use Exception;
 

@@ -4,6 +4,7 @@ namespace Thales\PhpBanking\Service;
 
 use Thales\PhpBanking\Model\Client\ClientRepositoryInterface;
 use Thales\PhpBanking\resources\Session;
+use Thales\PhpBanking\resources\Response;
 use PDOException;
 use Exception;
 
@@ -31,7 +32,15 @@ class ClientService
         }
 
         try {
-            return $this->clientRepository->createClient($username, $password, $name, $cpfcnpj, $email);
+            $client =  $this->clientRepository->createClient($username, $password, $name, $cpfcnpj, $email);
+            Session::start();
+            Session::set('client', [
+                'id' => $client['id'],
+                'username' => $client['username'],
+                'name' => $client['name']
+            ]);
+
+            return $client;
         } catch (PDOException $e) {
             if ($e->getCode() === '23505') { // erro de violação de UNIQUE no PostgreSQL
                 throw new Exception("Já existe um usuário com dados únicos conflitantes.");
@@ -79,13 +88,11 @@ class ClientService
 
         $client = $this->clientRepository->getClient($username);
         if (!$client) {
-            throw new Exception("usuario ou senha incorretos");
+            throw new Exception("usuario não existe");
         }
 
         if (!$client || !password_verify($password, $client['password'])) {
-            http_response_code(401);
-            echo json_encode(['details' => 'usuario ou senha incorretos']);
-            return;
+            Response::sendJson("usuario ou senha incorretos", 200);
         }
 
         Session::start();
