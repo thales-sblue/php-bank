@@ -2,6 +2,7 @@
 
 namespace Thales\PhpBanking\Model\Account;
 
+use Exception;
 use Thales\PhpBanking\config\Database\Database;
 use PDO;
 
@@ -23,8 +24,7 @@ class AccountRepository implements AccountRepositoryInterface
         $stmt->bindParam(':type', $type);
 
         if ($stmt->execute()) {
-            $id = $this->conn->lastInsertId();
-            return $this->getAccount($id);
+            return $this->getAccount($clientId, null);
         }
 
         return false;
@@ -46,14 +46,27 @@ class AccountRepository implements AccountRepositoryInterface
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAccount($id)
+    public function getAccount($clientId = null, $accountId = null)
     {
-        $query = "SELECT * FROM account WHERE id = :id";
+        if (!$clientId && !$accountId) {
+            throw new Exception('É necessário informar clientId ou accountId.');
+        }
+
+        if ($clientId) {
+            $query = "SELECT * FROM account WHERE client_id = :clientId";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':clientId', $clientId);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        $query = "SELECT * FROM account WHERE id = :accountId";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':accountId', $accountId);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     public function getAllAccounts()
     {
@@ -63,18 +76,18 @@ class AccountRepository implements AccountRepositoryInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateAccount($id, $balance, $type, $active)
+    public function updateAccount($accountId, $balance, $type, $active)
     {
         $query = "UPDATE account SET balance = :balance, type = :type, active = :active WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id', $accountId);
         $stmt->bindParam(':balance', $balance);
         $stmt->bindParam(':type', $type);
         $active = (bool)$active;
         $stmt->bindParam(':active', $active, PDO::PARAM_BOOL);
 
         if ($stmt->execute()) {
-            return $this->getAccount($id);
+            return $this->getAccount(null, $accountId);
         }
 
         return false;
@@ -88,7 +101,7 @@ class AccountRepository implements AccountRepositoryInterface
         $stmt->bindParam(':id', $accountId);
 
         if ($stmt->execute()) {
-            return $this->getAccount($accountId);
+            return $this->getAccount(null, $accountId);
         }
 
         return false;

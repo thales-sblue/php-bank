@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Transferência - Painel do Cliente</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f1f1f1;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: #1e1e1e;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      width: 600px;
+      max-height: 95vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .accounts, .destination-accounts {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .account-card {
+      background-color: #2a2a2a;
+      padding: 10px 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      text-align: left;
+    }
+
+    .account-card:hover {
+      background-color: #333;
+    }
+
+    .account-card.active {
+      border-color: rgb(11, 97, 196);
+      background-color: #1d1d1d;
+    }
+
+    .account-card h4 {
+      margin: 0 0 7px 0;
+    }
+
+    .account-card p {
+      margin: 0;
+    }
+
+    label {
+      display: block;
+      padding: 5px;
+      padding-top: 15px;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 95.5%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: rgb(11, 97, 196);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: rgb(10, 52, 100);
+    }
+
+    .back {
+      display: block;
+      margin-top: 15px;
+      color: #ff5f5f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back:hover {
+      color: #ff2f2f;
+    }
+
+    .feedback {
+      margin-top: 15px;
+    }
+
+    .success {
+      color: lightgreen;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="app" class="form-container">
+  <h2>Transferência</h2>
+
+  <div v-if="client" class="client-info">
+    <p><strong>Cliente:</strong> {{ client.name }}</p>
+    <p><strong>CPF/CNPJ:</strong> {{ client.cpfcnpj }}</p>
+  </div>
+
+  <form @submit.prevent="submitTransfer">
+
+    <label>Selecione sua Conta de Origem:</label>
+    <div class="accounts">
+      <div v-for="account in accounts" :key="account.id"
+           class="account-card"
+           :class="{ active: form.fromAccountId === account.id }"
+           @click="form.fromAccountId = account.id">
+        <h4>{{ account.type.toUpperCase() }}</h4>
+        <p>Saldo: R$ {{ account.balance.toFixed(2) }}</p>
+      </div>
+    </div>
+
+    <div v-if="users.length">
+      <label>Selecione o Usuário Destino:</label>
+      <select v-model="selectedUserId" @change="fetchUserAccounts">
+        <option disabled value="">Selecione um usuário</option>
+        <option v-for="user in users" :key="user.id" :value="user.id">
+          {{ user.name }} - CPF: {{ user.cpfcnpj }}
+        </option>
+      </select>
+    </div>
+
+    <div v-if="destinationAccounts.length">
+      <label>Selecione a Conta de Destino:</label>
+      <div class="destination-accounts">
+        <div v-for="account in destinationAccounts" :key="account.id"
+             class="account-card"
+             :class="{ active: form.toAccountId === account.id }"
+             @click="form.toAccountId = account.id">
+          <h4>{{ account.type.toUpperCase() }}</h4>
+          <p>ID Conta: {{ account.id }}</p>
+        </div>
+      </div>
+    </div>
+
+    <label>Valor da Transferência:</label>
+    <input type="number" v-model="form.amount" required min="1">
+
+    <button type="submit">Realizar Transferência</button>
+  </form>
+
+  <div class="feedback">
+    <div v-if="success" class="success">{{ success }}</div>
+    <div v-if="error" class="error">{{ error }}</div>
+  </div>
+
+  <a href="/clients/auth" class="back">Voltar</a>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      client: null,
+      accounts: [],
+      destinationAccounts: [],
+      users: [],
+      selectedUserId: '',
+      form: {
+        fromAccountId: '',
+        toAccountId: '',
+        amount: ''
+      },
+      success: '',
+      error: ''
+    }
+  },
+  methods: {
+    async fetchClientData() {
+      try {
+        const response = await fetch('/clients/home');
+        const data = await response.json();
+        if (!response.ok || !data.client) {
+          window.location.replace('/clients/login');
+          return;
+        }
+        this.client = data.client;
+        this.accounts = data.accounts || [];
+      } catch {
+        this.error = 'Erro ao carregar seus dados';
+      }
+    },
+
+    async fetchAllUsers() {
+      try {
+        const response = await fetch('/clients');
+        const data = await response.json();
+        this.users = data;
+      } catch {
+        this.error = 'Erro ao carregar lista de usuários';
+      }
+    },
+
+    async fetchUserAccounts() {
+      try {
+        this.error = '';
+        const response = await fetch(`/accounts/${this.selectedUserId}`);
+        const data = await response.json();
+
+        if(response.ok){
+            this.destinationAccounts = data;
+        } else {
+            this.error = data.details || data.error;
+        }
+      } catch {
+        this.error = data.details;
+      }
+    },
+
+    async submitTransfer() {
+      this.success = '';
+      this.error = '';
+
+      try {
+        const response = await fetch('/transfers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fromAccountId: this.form.fromAccountId,
+            toAccountId: this.form.toAccountId,
+            amount: parseFloat(this.form.amount)
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          this.success = data.message;
+          this.error = '';
+          this.form = { fromAccountId: '', toAccountId: '', amount: '' };
+          this.destinationAccounts = [];
+          this.selectedUserId = '';
+          this.fetchClientData();
+        } else {
+          this.success = '';
+          this.error = data.details || data.error || 'Erro na transferência';
+        }
+      } catch {
+        this.error = 'Erro na requisição';
+      }
+    }
+  },
+  mounted() {
+    this.fetchClientData();
+    this.fetchAllUsers();
+  }
+}).mount('#app');
+</script>
+
+</body>
+</html>

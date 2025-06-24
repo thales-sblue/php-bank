@@ -22,13 +22,9 @@ class TransferController
         try {
             switch ($method) {
                 case 'GET':
-                    if ($id) {
-                        $transfers = $this->transferService->getTransfersByAccount($id);
-                        Response::sendJson($transfers);
-                    } else {
-                        $transfers = $this->transferService->getAllTransfers();
-                        Response::sendJson($transfers);
-                    }
+                    header('Content-Type: text/html; charset=utf-8');
+                    require __DIR__ . "/../View/Transfer/create.phtml";
+
                     break;
 
                 case 'POST':

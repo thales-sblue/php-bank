@@ -19,15 +19,15 @@ class AccountController
     public function handleRequest($method, $uri): void
     {
         $param = $uri[2] ?? null;
-        $id = (is_numeric($param)) ? (int)$param : null;
+        $clientId = (is_numeric($param)) ? (int)$param : null;
         $action = (!is_numeric($param)) ? $param : null;
 
         try {
             switch ($method) {
                 case 'GET':
-                    if ($id) {
-                        $account = $this->accountService->getAccount($id);
-                        Response::sendJson($account);
+                    if ($clientId) {
+                        $data = $this->accountService->getAccount($clientId, null);
+                        Response::sendJson($data);
                     } elseif ($action == 'create') {
                         Session::requireLogin();
                         header('Content-Type: text/html; charset=utf-8');

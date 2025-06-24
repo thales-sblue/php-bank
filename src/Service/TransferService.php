@@ -26,7 +26,7 @@ class TransferService
     public function createTransfer($fromAccountId, $toAccountId, $amount)
     {
         if (empty($fromAccountId) || empty($toAccountId) || empty($amount)) {
-            throw new Exception("Campos obrigatórios não informados (fromAccountId/toAccountId/amount).");
+            throw new Exception("Campos obrigatórios não informados!");
         }
 
         return $this->transferRepository->createTransfer($fromAccountId, $toAccountId, $amount);
