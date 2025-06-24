@@ -112,5 +112,6 @@ switch ($route) {
         break;
 
     default:
+        header('Location: /clients/login');
         break;
 }
