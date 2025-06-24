@@ -49,13 +49,7 @@ class ClientController
 
                     if ($action == 'login') {
                         $client = $this->clientService->login($data['username'], $data['password']);
-
-                        Response::sendJson([
-                            'message' => 'Cliente logado com sucesso',
-                            'client' => $client
-                        ], 200);
-
-                        break;
+                        Response::sendJson($client);
                     } else {
                         if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
                             Response::sendError(

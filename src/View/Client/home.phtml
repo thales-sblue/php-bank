@@ -131,7 +131,7 @@ createApp({
 
         if (!response.ok || !data.client) {
           alert(data.error || 'Erro ao carregar dados');
-          window.location.href = '/login';
+          window.location.replace('/clients/login');
           return;
         }
 
@@ -140,7 +140,7 @@ createApp({
 
       } catch (err) {
         alert('Erro ao carregar dados');
-        window.location.href = '/login';
+        window.location.replace('/clients/login');
       }
     }
   },

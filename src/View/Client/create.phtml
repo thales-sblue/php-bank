@@ -155,7 +155,7 @@
                 email: ''
               };
               setTimeout(() => {
-                window.location.href = '/clients/login';
+                window.location.replace('/clients/login');
               }, 1500);
             } else {
               alert(data.error || 'Erro ao cadastrar');

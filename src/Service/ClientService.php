@@ -42,6 +42,8 @@ class ClientService
 
             return $client;
         } catch (PDOException $e) {
+            Session::destroy();
+
             if ($e->getCode() === '23505') { // erro de violação de UNIQUE no PostgreSQL
                 throw new Exception("Já existe um usuário com dados únicos conflitantes.");
             }
@@ -81,9 +83,7 @@ class ClientService
     public function login(string $username = '', string $password = '')
     {
         if (!$username || !$password) {
-            http_response_code(400);
-            echo json_encode(['error' => 'usuario e senha sao obrigatorios']);
-            return;
+            Response::sendJson("usuario e senha sao obrigatorios", 400);
         }
 
         $client = $this->clientRepository->getClient($username);
@@ -114,11 +114,11 @@ class ClientService
 
     public function getClientAccounts()
     {
-        $client = Session::get('client');
+        $client = Session::get('client') ?? '';
         if (!$client) {
             Session::destroy();
         }
-        $clientId = (int)$client['id'];
+        $clientId = $client['id'] ?? '';
         $data = $this->clientRepository->getClientAccounts($clientId);
 
         $client = [

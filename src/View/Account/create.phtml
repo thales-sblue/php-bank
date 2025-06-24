@@ -181,7 +181,7 @@
               this.success = data.message;
               this.error = '';
               setTimeout(() => {
-                window.location.href = '/clients/home';
+                window.location.replace('/clients/auth');
               }, 1500);
             } else {
               this.success = '';

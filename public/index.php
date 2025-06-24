@@ -17,7 +17,7 @@ use Thales\PhpBanking\Controller\TransactionController;
 use Thales\PhpBanking\Model\Transfer\TransferRepository;
 use Thales\PhpBanking\Service\TransferService;
 use Thales\PhpBanking\Controller\TransferController;
-
+use Thales\PhpBanking\resources\Session;
 
 header('Content-Type: application/json; charset=utf-8');
 
