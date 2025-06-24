@@ -37,11 +37,11 @@ class TransferService
         if (empty($fromAccountId) || empty($toAccountId) || empty($amount)) {
             throw new Exception("Campos obrigatórios não informados (fromAccountId/toAccountId/amount).");
         }
-        if (!$this->accountService->getAccount($fromAccountId)) {
+        if (!$this->accountService->getAccount(null, $fromAccountId)) {
             throw new Exception("Conta de origem não existe.");
         }
 
-        if (!$this->accountService->getAccount($toAccountId)) {
+        if (!$this->accountService->getAccount(null, $toAccountId)) {
             throw new Exception("Conta de destino não existe.");
         }
 

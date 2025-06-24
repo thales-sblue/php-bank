@@ -247,6 +247,8 @@ createApp({
     async fetchUserAccounts() {
       try {
         this.error = '';
+        this.destinationAccounts = '';
+        this.form.toAccountId = '';
         const response = await fetch(`/accounts/${this.selectedUserId}`);
         const data = await response.json();
 
