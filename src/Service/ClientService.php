@@ -105,13 +105,6 @@ class ClientService
         return $client;
     }
 
-    public function logout()
-    {
-        Session::destroy();
-        header('Location: /login');
-        exit;
-    }
-
     public function getClientAccounts()
     {
         $client = Session::get('client') ?? '';

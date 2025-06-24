@@ -99,14 +99,18 @@ switch ($route) {
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;
 
-    default:
+    case 'logout':
+        Session::destroy();
         $repository = new ClientRepository();
         $service = new ClientService($repository);
         $controller = new ClientController($service);
         $uri = [];
-        $uri[0] = 'default';
+        $uri[0] = 'logout';
         $uri[1] = 'clients';
         $uri[2] = 'login';
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
+        break;
+
+    default:
         break;
 }
