@@ -20,7 +20,7 @@ class TransactionService
     public function createTransaction($accountId, $amount, $type, $transferId = null)
     {
         if (empty($accountId) || empty($amount) || empty($type)) {
-            throw new Exception("Campos obrigatórios não informados (accountId/amount/type).");
+            throw new Exception("Campos obrigatórios não informados!");
         }
 
         if (!in_array($type, ['deposito', 'saque'])) {

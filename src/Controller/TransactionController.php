@@ -22,13 +22,8 @@ class TransactionController
         try {
             switch ($method) {
                 case 'GET':
-                    if ($id) {
-                        $transaction = $this->transactionService->getTransactionsByAccount($id);
-                        Response::sendJson($transaction);
-                    } else {
-                        $transaction = $this->transactionService->getAllTransactions();
-                        Response::sendJson($transaction);
-                    }
+                    header('Content-Type: text/html; charset=utf-8');
+                    require __DIR__ . "/../View/Transaction/create.phtml";
                     break;
 
                 case 'POST':

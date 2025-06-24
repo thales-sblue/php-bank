@@ -90,7 +90,8 @@ class ClientRepository implements ClientRepositoryInterface
                     FROM client cli
                     LEFT JOIN account acc
                     ON cli.id = acc.client_id
-                   WHERE cli.id = :idClient";
+                   WHERE cli.id = :idClient
+                   ORDER BY acc.type";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':idClient', $idClient);
         $stmt->execute();

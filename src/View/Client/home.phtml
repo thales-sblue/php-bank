@@ -55,7 +55,7 @@
       padding: 10px 20px;
       border: none;
       border-radius: 8px;
-      background-color: #0077ff;
+      background-color:rgb(11, 97, 196);
       color: white;
       cursor: pointer;
       text-decoration: none;
@@ -64,7 +64,7 @@
     }
 
     button:hover, a.button:hover {
-      background-color: #005ecc;
+      background-color:rgb(10, 52, 100);
     }
 
     .logout {
@@ -97,10 +97,9 @@
     </div>
 
     <div class="buttons">
-      <a href="/deposit" class="button">Depositar</a>
-      <a href="/withdraw" class="button">Sacar</a>
-      <a href="/transfer" class="button">Transferir</a>
-      <a href="/transactions" class="button">Extrato</a>
+      <a href="/transactions" class="button">Transações</a>
+      <a href="/transfers" class="button">Transferencias</a>
+      <a href="/extracts" class="button">Extratos</a>
       <a v-if="accounts.length === 1" href="/accounts/create" class="button">Nova conta</a>
     </div>
   </template>
