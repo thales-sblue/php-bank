@@ -17,13 +17,23 @@ class TransactionController
 
     public function handleRequest(string $method, array $uri): void
     {
-        $id = isset($uri[2]) ? (int)$uri[2] : null;
+        $param = $uri[2] ?? null;
+        $id = (is_numeric($param)) ? (int)$param : null;
+        $action = (!is_numeric($param)) ? $param : null;
 
         try {
             switch ($method) {
                 case 'GET':
-                    header('Content-Type: text/html; charset=utf-8');
-                    require __DIR__ . "/../View/Transaction/create.phtml";
+                    if ($action === 'extracts') {
+                        header('Content-Type: text/html; charset=utf-8');
+                        require __DIR__ . "/../View/Transaction/extract.phtml";
+                    } elseif ($id > 0) {
+                        $accountTransactions = $this->transactionService->getTransactionsByAccount($id);
+                        Response::sendJson($accountTransactions, 200);
+                    } else {
+                        header('Content-Type: text/html; charset=utf-8');
+                        require __DIR__ . "/../View/Transaction/create.phtml";
+                    }
                     break;
 
                 case 'POST':
