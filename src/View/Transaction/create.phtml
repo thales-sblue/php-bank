@@ -276,7 +276,7 @@
               this.fetchClientData();
             } else {
               this.success = '';
-              this.error = data.error || data.details || 'Erro na transação';
+              this.error = data.details || data.error || 'Erro na transação';
             }
 
           } catch (err) {
