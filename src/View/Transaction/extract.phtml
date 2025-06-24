@@ -109,8 +109,18 @@
   <div v-if="transactions.length > 0" class="transactions">
     <h3>Transações da Conta {{ selectedAccountType.toUpperCase() }}</h3>
     <div v-for="transaction in transactions" :key="transaction.id" class="transaction">
-      <p><strong>Tipo:</strong> {{ transaction.type }}</p>
-      <p><strong>Valor:</strong> R$ {{ transaction.amount }}</p>
+      <p>
+        <strong>Tipo:</strong>
+        {{ transaction.transfer_id
+            ? 'Transferência'
+            : transaction.type === 'saque'
+            ? 'Saque'
+            : 'Depósito'}}
+      </p>
+      <p>
+        <strong>{{ transaction.type === 'saque' ? 'Débito' : 'Crédito' }}:</strong>
+        R$ {{ transaction.amount }}
+      </p>
       <p><strong>Data:</strong> {{ formatDate(transaction.created_at) }}</p>
     </div>
   </div>
