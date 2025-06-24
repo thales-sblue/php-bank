@@ -83,7 +83,7 @@ class ClientService
     public function login(string $username = '', string $password = '')
     {
         if (!$username || !$password) {
-            Response::sendJson("usuario e senha sao obrigatorios", 400);
+            throw new Exception("usuario e senha sao obrigatorios");
         }
 
         $client = $this->clientRepository->getClient($username);
@@ -92,7 +92,7 @@ class ClientService
         }
 
         if (!$client || !password_verify($password, $client['password'])) {
-            Response::sendJson("usuario ou senha incorretos", 200);
+            throw new Exception("usuario ou senha incorretos");
         }
 
         Session::start();

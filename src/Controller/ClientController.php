@@ -49,7 +49,7 @@ class ClientController
 
                     if ($action == 'login') {
                         $client = $this->clientService->login($data['username'], $data['password']);
-                        Response::sendJson($client);
+                        Response::sendJson($client, 200);
                     } else {
                         if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
                             Response::sendError(
