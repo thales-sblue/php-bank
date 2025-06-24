@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Home - Painel do Usuário</title>
+  <title>Home - Painel do Cliente</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
     body {
@@ -21,7 +21,9 @@
       padding: 30px 40px;
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-      width: 500px;
+      width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
       text-align: center;
     }
 
@@ -81,12 +83,17 @@
 <body>
 
 <div id="app" class="dashboard">
-  <h2>Bem-vindo, {{ user.name }}</h2>
+  <h2 v-if="client">Bem-vindo, {{ client.name }}</h2>
 
   <template v-if="accounts.length > 0">
     <div v-for="account in accounts" :key="account.id" class="account">
       <h3>Conta {{ account.type }}</h3>
       <p><strong>Saldo:</strong> R$ {{ account.balance.toFixed(2) }}</p>
+      <p><strong>Status: </strong>
+        <span :style="{ color: account.active ? 'lightgreen' : 'red' }">
+          {{ account.active ? 'Ativa' : 'Inativa' }}
+        </span>
+      </p>
     </div>
 
     <div class="buttons">
@@ -94,12 +101,13 @@
       <a href="/withdraw" class="button">Sacar</a>
       <a href="/transfer" class="button">Transferir</a>
       <a href="/transactions" class="button">Extrato</a>
+      <a v-if="accounts.length === 1" href="/accounts/create" class="button">Nova conta</a>
     </div>
   </template>
 
   <template v-else>
     <p>Você ainda não possui nenhuma conta ativa.</p>
-    <a href="/open-account" class="button">Abrir Conta</a>
+    <a href="/accounts/create" class="button">Abrir Conta</a>
   </template>
 
   <a href="/logout" class="logout">Sair</a>
@@ -111,27 +119,25 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
-      user: {
-        name: 'Carregando...'
-      },
+      client: null,
       accounts: []
     }
   },
   methods: {
-    async fetchUserData() {
+    async fetchClientData() {
       try {
         const response = await fetch('/clients/home');
         const data = await response.json();
-        console.log(data);
 
-        if (!response.ok) {
+        if (!response.ok || !data.client) {
           alert(data.error || 'Erro ao carregar dados');
           window.location.href = '/login';
           return;
         }
 
-        this.user = data.client;
-        this.accounts = data.accounts;
+        this.client = data.client;
+        this.accounts = data.accounts || [];
+
       } catch (err) {
         alert('Erro ao carregar dados');
         window.location.href = '/login';
@@ -139,7 +145,7 @@ createApp({
     }
   },
   mounted() {
-    this.fetchUserData();
+    this.fetchClientData();
   }
 }).mount('#app');
 </script>

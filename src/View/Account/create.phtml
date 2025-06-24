@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Abrir Conta</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f1f1f1;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: #1e1e1e;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      width: 450px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      background-color: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #005ecc;
+    }
+
+    .back {
+      display: block;
+      margin-top: 15px;
+      color: #ff5f5f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back:hover {
+      color: #ff2f2f;
+    }
+
+    .client-info {
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .client-info p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="form-container">
+    <h2>Abrir Conta</h2>
+
+    <div class="client-info" v-if="client">
+      <p><strong>Id:</strong> {{ client.id }}</p>
+      <p><strong>Nome:</strong> {{ client.name }}</p>
+      <p><strong>CPF/CNPJ:</strong> {{ client.cpfcnpj }}</p>
+      <p><strong>Email:</strong> {{ client.email }}</p>
+    </div>
+
+    <form @submit.prevent="submitForm">
+      <label for="type">Tipo de Conta:</label>
+      <select v-model="form.type" required>
+        <option value="">Selecione</option>
+        <option value="corrente">Corrente</option>
+        <option value="poupanca">Poupança</option>
+      </select>
+
+      <button type="submit">Abrir Conta</button>
+    </form>
+
+    <div v-if="success" style="margin-top: 15px; color: lightgreen;">
+      {{ success }}
+    </div>
+
+    <div v-if="error" style="margin-top: 15px; color: red;">
+      {{ error }}
+    </div>
+
+    <a href="/home" class="back">Voltar</a>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          client: null,
+          form: {
+            type: '',
+          },
+          success: '',
+          error: ''
+        }
+      },
+      methods: {
+        async fetchClientData() {
+          try {
+            const response = await fetch('/clients/home');
+            const data = await response.json();
+
+            if (!response.ok || !data.client) {
+              alert(data.error || 'Erro ao carregar dados');
+              window.location.href = '/login';
+              return;
+            }
+
+            this.client = data.client;
+
+            if (data.accounts && data.accounts.length > 2) {
+              window.location.href = '/home';
+            }
+
+          } catch (err) {
+            alert('Erro ao carregar dados');
+            window.location.href = '/login';
+          }
+        },
+
+        async submitForm() {
+          try {
+            const response = await fetch('/accounts', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                client_id: this.form.id,
+                type: this.form.type,
+                balance: 0
+              })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              this.success = data.message;
+              this.error = '';
+              setTimeout(() => {
+                window.location.href = '/clients/home';
+              }, 1500);
+            } else {
+              this.success = '';
+              this.error = data.details || 'Erro ao abrir conta';
+            }
+          } catch (err) {
+            this.success = '';
+            this.error = 'Erro na requisição';
+          }
+        }
+      },
+      mounted() {
+        this.fetchClientData();
+      }
+    }).mount('#app');
+  </script>
+
+</body>
+
+</html>

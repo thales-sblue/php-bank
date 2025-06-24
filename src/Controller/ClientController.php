@@ -48,7 +48,14 @@ class ClientController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if ($action == 'login') {
-                        $return = $this->clientService->login($data['username'], $data['password']);
+                        $client = $this->clientService->login($data['username'], $data['password']);
+
+                        Response::sendJson([
+                            'message' => 'Cliente logado com sucesso',
+                            'client' => $client
+                        ], 200);
+
+                        break;
                     } else {
                         if (!isset($data['username'], $data['password'], $data['name'], $data['cpfcnpj'], $data['email'])) {
                             Response::sendError(

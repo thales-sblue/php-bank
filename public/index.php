@@ -71,7 +71,6 @@ switch ($route) {
     case 'accounts':
         $repository = new AccountRepository();
         $service = new AccountService($repository);
-
         $controller = new AccountController($service);
         $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
         break;

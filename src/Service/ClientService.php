@@ -73,30 +73,29 @@ class ClientService
     {
         if (!$username || !$password) {
             http_response_code(400);
-            echo json_encode(['error' => 'Username e senha são obrigatórios']);
+            echo json_encode(['error' => 'usuario e senha sao obrigatorios']);
             return;
         }
 
         $client = $this->clientRepository->getClient($username);
         if (!$client) {
-            throw new Exception("Usuário/senha incorretos.");
+            throw new Exception("usuario ou senha incorretos");
         }
 
         if (!$client || !password_verify($password, $client['password'])) {
             http_response_code(401);
-            echo json_encode(['error' => 'Usuário/senha incorretos']);
+            echo json_encode(['details' => 'usuario ou senha incorretos']);
             return;
         }
 
+        Session::start();
         Session::set('client', [
             'id' => $client['id'],
             'username' => $client['username'],
             'name' => $client['name']
         ]);
 
-
-        echo json_encode(['message' => 'Login realizado com sucesso']);
-        return;
+        return $client;
     }
 
     public function logout()
@@ -110,26 +109,28 @@ class ClientService
     {
         $client = Session::get('client');
         if (!$client) {
-            logout();
+            Session::destroy();
         }
         $clientId = (int)$client['id'];
-        $results = $this->clientRepository->getClientAccounts($clientId);
+        $data = $this->clientRepository->getClientAccounts($clientId);
 
         $client = [
-            'username' => $results['username'],
-            'name'     => $results['name'],
-            'cpfcnpj'  => $results['cpfcnpj'],
-            'email'    => $results['email'],
+            'id' => $clientId,
+            'username' => $data[0]['username'],
+            'name'     => $data[0]['name'],
+            'cpfcnpj'  => $data[0]['cpfcnpj'],
+            'email'    => $data[0]['email'],
         ];
 
         $accounts = [];
-        if (isset($results['id'])) {
-            foreach ($results as $row) {
+
+        foreach ($data as $row) {
+            if (!empty($row['id'])) {
                 $accounts[] = [
                     'id'      => $row['id'],
-                    'balance' => (float)$row['balance'],
-                    'type'    => $row['type'],
-                    'active'  => (bool)$row['active'],
+                    'balance' => (float) ($row['balance'] ?? 0),
+                    'type'    => $row['type'] ?? '',
+                    'active'  => (bool) ($row['active'] ?? false),
                 ];
             }
         }
@@ -140,7 +141,7 @@ class ClientService
         ];
 
         if (!$response) {
-            throw new Exception("Usuário não possui conta criada.");
+            throw new Exception("usuario nao possui conta criada");
         }
 
         return $response;

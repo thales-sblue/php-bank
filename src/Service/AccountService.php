@@ -14,7 +14,7 @@ class AccountService
         $this->accountRepository = $accountRepository;
     }
 
-    public function createAccount($clientId, $balance, $type)
+    public function createAccount($clientId, $type, $balance = 0)
     {
         if (empty($clientId) || empty($type)) {
             throw new Exception("Campos obrigatórios não informados(clientId/type).");

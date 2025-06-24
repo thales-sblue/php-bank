@@ -17,6 +17,15 @@ class Session
         return $_SESSION[$key] ?? null;
     }
 
+    public static function requireLogin()
+    {
+        self::start();
+        if (!isset($_SESSION['client'])) {
+            header('Location: /login');
+            exit;
+        }
+    }
+
     public static function set(string $key, $value): void
     {
         self::start();

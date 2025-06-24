@@ -157,7 +157,7 @@
             if (response.ok) {
               window.location.href = '/clients/auth';
             } else {
-              this.error = data.error || 'Credenciais inválidas';
+              this.error = data.details || 'Credenciais inválidas';
             }
           } catch (error) {
             this.error = 'Erro na requisição';
