@@ -5,74 +5,100 @@
   <title>Home - Painel do Cliente</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #121212;
-      color: #f1f1f1;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1115;
+      color: #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
 
     .dashboard {
-      background-color: #1e1e1e;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-      width: 650px;
-      max-height: 90vh;
-      overflow-y: auto;
-      text-align: center;
+      background: #1a1d23;
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 700px;
     }
 
     h2 {
-      margin-bottom: 20px;
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #e0e0e0;
     }
 
     .account {
-      background-color: #2a2a2a;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      text-align: left;
+      background: #252a33;
+      border-left: 5px solid lightgreen;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
+    }
+
+    .account.inactive {
+      border-color: crimson;
     }
 
     .account h3 {
-      margin: 0 0 10px 0;
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #ffffff;
+    }
+
+    .account p {
+      margin: 5px 0;
+      color: #ccc;
     }
 
     .buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 12px;
       justify-content: center;
+      margin-top: 25px;
     }
 
-    button, a.button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background-color:rgb(11, 97, 196);
+    a.button {
+      background: #0b61c4;
       color: white;
-      cursor: pointer;
-      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
       font-weight: bold;
-      transition: background-color 0.3s;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    button:hover, a.button:hover {
-      background-color:rgb(10, 52, 100);
+    a.button:hover {
+      background: #083d75;
+      transform: translateY(-2px);
+    }
+
+    .empty-message {
+      text-align: center;
+      font-size: 16px;
+      color: #bbb;
     }
 
     .logout {
       display: block;
-      margin-top: 20px;
+      margin-top: 30px;
+      text-align: center;
       color: #ff5f5f;
-      text-decoration: none;
       font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s;
     }
 
     .logout:hover {
@@ -86,11 +112,16 @@
   <h2 v-if="client">Bem-vindo, {{ client.name }}</h2>
 
   <template v-if="accounts.length > 0">
-    <div v-for="account in accounts" :key="account.id" class="account">
+    <div
+      v-for="account in accounts"
+      :key="account.id"
+      class="account"
+      :class="{ inactive: !account.active }"
+    >
       <h3>Conta {{ account.type }}</h3>
       <p><strong>Saldo:</strong> R$ {{ account.balance.toFixed(2) }}</p>
-      <p><strong>Status: </strong>
-        <span :style="{ color: account.active ? 'lightgreen' : 'red' }">
+      <p><strong>Status:</strong>
+        <span :style="{ color: account.active ? 'lightgreen' : 'crimson' }">
           {{ account.active ? 'Ativa' : 'Inativa' }}
         </span>
       </p>
@@ -98,15 +129,17 @@
 
     <div class="buttons">
       <a href="/transactions" class="button">Transações</a>
-      <a href="/transfers" class="button">Transferencias</a>
+      <a href="/transfers" class="button">Transferências</a>
       <a href="/transactions/extracts" class="button">Extratos</a>
-      <a v-if="accounts.length === 1" href="/accounts/create" class="button">Nova conta</a>
+      <a v-if="accounts.length === 1" href="/accounts/create" class="button">Nova Conta</a>
     </div>
   </template>
 
   <template v-else>
-    <p>Você ainda não possui nenhuma conta ativa.</p>
-    <a href="/accounts/create" class="button">Abrir Conta</a>
+    <p class="empty-message">Você ainda não possui nenhuma conta ativa.</p>
+    <div class="buttons">
+      <a href="/accounts/create" class="button">Abrir Conta</a>
+    </div>
   </template>
 
   <a href="/logout" class="logout">Sair</a>
@@ -136,7 +169,6 @@ createApp({
 
         this.client = data.client;
         this.accounts = data.accounts || [];
-
       } catch (err) {
         alert('Erro ao carregar dados');
         window.location.replace('/clients/login');
