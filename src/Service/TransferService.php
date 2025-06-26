@@ -35,20 +35,20 @@ class TransferService
     public function processTransfer($fromAccountId, $toAccountId, $amount)
     {
         if (empty($fromAccountId) || empty($toAccountId) || empty($amount)) {
-            throw new Exception("Campos obrigatórios não informados (fromAccountId/toAccountId/amount).");
+            throw new Exception("Campos obrigatórios não informados!");
         }
         if (!$this->accountService->getAccount(null, $fromAccountId)) {
-            throw new Exception("Conta de origem não existe.");
+            throw new Exception("Conta de origem não existe!");
         }
 
         if (!$this->accountService->getAccount(null, $toAccountId)) {
-            throw new Exception("Conta de destino não existe.");
+            throw new Exception("Conta de destino não existe!");
         }
 
         try {
             $transfer = $this->transferRepository->createTransfer($fromAccountId, $toAccountId, $amount);
             if (!$transfer) {
-                throw new Exception("Erro ao criar transferência.");
+                throw new Exception("Erro ao criar transferência!");
             }
 
             $this->transactionService->processTransferTransactions($transfer);
@@ -57,14 +57,14 @@ class TransferService
             return $transfer;
         } catch (Exception $e) {
             $this->transferRepository->updateTransferStatus($transfer['id'], 'failed');
-            throw new Exception("Erro ao processar transferência: " . $e->getMessage());
+            throw new Exception("Erro ao processar transferência! " . $e->getMessage());
         }
     }
 
     public function getTransfersByAccount($accountId)
     {
         if (empty($accountId)) {
-            throw new Exception("Campo obrigatório não informado (accountId).");
+            throw new Exception("Campo obrigatório não informado!");
         }
 
         return $this->transferRepository->getTransfersByAccount($accountId);

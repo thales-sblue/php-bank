@@ -45,7 +45,7 @@ class AccountController
                     $clientId = $data['client_id'] ?? ($client['id'] ?? null);
 
                     if (!isset($data['type']) || empty($clientId)) {
-                        Response::sendError('Dados obrigatórios ausentes (user_id, type)', 400);
+                        Response::sendError('Dados obrigatórios ausentes!', 400);
                     }
 
                     $type   = $data['type'];
@@ -54,11 +54,11 @@ class AccountController
                     $account = $this->accountService->createAccount($clientId, $type, $balance);
 
                     if (!$account) {
-                        Response::sendError('Erro ao criar a conta.', 500);
+                        Response::sendError('Erro ao criar a conta!', 500);
                     }
 
                     Response::sendJson([
-                        'message' => 'Conta criada com sucesso',
+                        'message' => 'Conta cadastrada com sucesso!',
                         'account' => $account
                     ], 201);
 
@@ -66,7 +66,7 @@ class AccountController
 
                 case 'PUT':
                     if (!$id) {
-                        Response::sendError('ID da conta é obrigatório para atualizar', 400);
+                        Response::sendError('Campo obrigatório não informado!', 400);
                     }
 
                     $data = json_decode(file_get_contents('php://input'), true);
@@ -79,16 +79,16 @@ class AccountController
                     );
 
                     Response::sendJson([
-                        'message' => 'Conta atualizada com sucesso',
+                        'message' => 'Conta atualizada com sucesso!',
                         'account' => $accountUpdated
                     ], 200);
                     break;
 
                 default:
-                    Response::sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido!', 405);
             }
         } catch (Exception $e) {
-            Response::sendError('Erro interno ao processar a requisição', 500, $e->getMessage());
+            Response::sendError('Erro interno ao processar a requisição!', 500, $e->getMessage());
         }
     }
 }

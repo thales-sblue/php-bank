@@ -40,7 +40,7 @@ class TransactionController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (empty($data['accountId']) || empty($data['amount']) || empty($data['type'])) {
-                        Response::sendError("Campos obrigatórios não informados (accountId/amount/type).", 400);
+                        Response::sendError("Campos obrigatórios não informados!", 400);
                     }
 
                     $transaction = $this->transactionService->createTransaction(
@@ -54,16 +54,16 @@ class TransactionController
                     }
 
                     Response::sendJson([
-                        'message' => 'Transação efetivada com sucesso.',
+                        'message' => 'Transação efetivada com sucesso!.',
                         'transaction' => $transaction
                     ], 201);
                     break;
 
                 default:
-                    Response::sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido!', 405);
             }
         } catch (Exception $e) {
-            Response::sendError('Erro interno no servidor', 500, $e->getMessage());
+            Response::sendError('Erro interno no servidor!', 500, $e->getMessage());
         }
     }
 }

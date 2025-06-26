@@ -71,7 +71,7 @@ class ClientController
                         }
 
                         Response::sendJson([
-                            'message' => 'Cliente criado com sucesso',
+                            'message' => 'Cliente cadastrado com sucesso!',
                             'client' => $client
                         ], 201);
                     }
@@ -79,13 +79,13 @@ class ClientController
 
                 case 'PUT':
                     if (!$id) {
-                        Response::sendError('ID do cliente é obrigatório para atualização', 400);
+                        Response::sendError('Campos obrigatórios não informados!', 400);
                     }
 
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (!isset($data['username'], $data['password'], $data['name'], $data['email'])) {
-                        Response::sendError('Dados obrigatórios ausentes (username, password, name, email)', 400);
+                        Response::sendError('Campos obrigatórios não informados!', 400);
                     }
 
                     $updated = $this->clientService->updateClient(
@@ -97,21 +97,21 @@ class ClientController
                     );
 
                     if (!$updated) {
-                        Response::sendError("Erro ao atualizar cliente com ID $id", 500);
+                        Response::sendError("Erro ao atualizar cliente com ID $id !", 500);
                     }
 
                     Response::sendJson([
-                        'message' => 'Cliente atualizado com sucesso',
+                        'message' => 'Cliente atualizado com sucesso!',
                         'client' => $updated
                     ]);
                     break;
 
                 default:
-                    Response::sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido!', 405);
                     break;
             }
         } catch (Exception $e) {
-            Response::sendError('Erro inesperado no servidor', 500, $e->getMessage());
+            Response::sendError('Erro inesperado no servidor!', 500, $e->getMessage());
         }
     }
 }

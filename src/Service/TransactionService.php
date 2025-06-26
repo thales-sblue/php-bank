@@ -24,13 +24,13 @@ class TransactionService
         }
 
         if (!in_array($type, ['deposito', 'saque'])) {
-            throw new Exception("Tipo inválido. Use 'deposito' ou 'saque'.");
+            throw new Exception("Tipo inválido. Use 'deposito' ou 'saque'!");
         }
 
         $processedTransaction = $this->accountService->processTransaction($accountId, $amount, $type);
 
         if (!$processedTransaction) {
-            throw new Exception("Erro ao atualizar saldo da conta.");
+            throw new Exception("Erro ao atualizar saldo da conta!");
         }
 
         return $this->transactionRepository->createTransaction($accountId, $amount, $type, $transferId);
@@ -44,7 +44,7 @@ class TransactionService
         $amount        = $transfer['amount'] ?? null;
 
         if (!$fromAccountId || !$toAccountId || !$amount || !$transferId) {
-            throw new Exception("Transferência incompleta: campos obrigatórios ausentes.");
+            throw new Exception("Campos obrigatórios não informados!");
         }
 
 

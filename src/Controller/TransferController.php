@@ -31,7 +31,7 @@ class TransferController
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (!isset($data['fromAccountId'], $data['toAccountId'], $data['amount'])) {
-                        Response::sendError('Dados obrigatórios ausentes (fromAccountId, toAccountId, amount)', 400);
+                        Response::sendError('Campos obrigatórios não informados!', 400);
                     }
 
                     $transfer = $this->transferService->processTransfer(
@@ -41,17 +41,17 @@ class TransferController
                     );
 
                     Response::sendJson([
-                        'message' => 'Transferência realizada com sucesso.',
+                        'message' => 'Transferência realizada com sucesso!',
                         'transfer' => $transfer
                     ], 201);
                     break;
 
                 default:
-                    Response::sendError('Método não permitido', 405);
+                    Response::sendError('Método não permitido!', 405);
                     break;
             }
         } catch (Exception $e) {
-            Response::sendError('Erro ao processar a transferência', 500, $e->getMessage());
+            Response::sendError('Erro ao processar a transferência!', 500, $e->getMessage());
         }
     }
 }

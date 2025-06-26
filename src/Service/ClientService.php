@@ -45,7 +45,7 @@ class ClientService
             Session::destroy();
 
             if ($e->getCode() === '23505') { // erro de violação de UNIQUE no PostgreSQL
-                throw new Exception("Já existe um usuário com dados únicos conflitantes.");
+                throw new Exception("Já existe um usuário com dados únicos conflitantes!");
             }
 
             throw $e;
@@ -56,7 +56,7 @@ class ClientService
     {
         $client = $this->clientRepository->getClient($id);
         if (!$client) {
-            throw new Exception("Usuário não encontrado.");
+            throw new Exception("Usuário não encontrado!");
         }
         return $client;
     }
@@ -70,11 +70,11 @@ class ClientService
     {
         $client = $this->clientRepository->getClient($id);
         if (!$client) {
-            throw new Exception("Usuário não encontrado para atualização.");
+            throw new Exception("Usuário não encontrado!");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Email inválido.");
+            throw new Exception("Email inválido!");
         }
 
         return $this->clientRepository->updateClient($id, $username, $password, $name, $email);
@@ -83,16 +83,16 @@ class ClientService
     public function login(string $username = '', string $password = '')
     {
         if (!$username || !$password) {
-            throw new Exception("usuario e senha sao obrigatorios");
+            throw new Exception("Usuário e senha sao obrigatórios!");
         }
 
         $client = $this->clientRepository->getClient($username);
         if (!$client) {
-            throw new Exception("usuario não existe");
+            throw new Exception("Usuário não existe!");
         }
 
         if (!$client || !password_verify($password, $client['password'])) {
-            throw new Exception("usuario ou senha incorretos");
+            throw new Exception("Usuário ou senha incorretos!");
         }
 
         Session::start();
@@ -141,7 +141,7 @@ class ClientService
         ];
 
         if (!$response) {
-            throw new Exception("usuario nao possui conta criada");
+            throw new Exception("Usuário não possui conta criada!");
         }
 
         return $response;
