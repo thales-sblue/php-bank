@@ -18,16 +18,16 @@ class AccountService
     public function createAccount($clientId, $type, $balance = 0)
     {
         if (empty($clientId) || empty($type)) {
-            throw new Exception("Campos obrigatórios não informados(clientId/type)!");
+            throw new Exception("Campos obrigatórios não informados!");
         }
 
         if (!in_array($type, ['corrente', 'poupanca'])) {
-            throw new Exception("Type inválido. Use 'corrente' ou 'poupanca'!");
+            throw new Exception("Tipo inválido. Use 'corrente' ou 'poupanca'!");
         }
 
         $accountExists = $this->accountRepository->getAccountByClientId($clientId, $type);
         if ($accountExists) {
-            throw new Exception("Já existe uma conta do tipo {$type} para o cliente com ID {$clientId}!");
+            throw new Exception("Você já possui uma conta do tipo {$type}!");
         }
 
         return $this->accountRepository->createAccount($clientId, $balance, $type);
