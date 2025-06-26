@@ -46,7 +46,7 @@
 
 ```bash
 # Clone o repositório
-git clone https://github.com/thales-blue/php-banking-api.git
+git clone https://github.com/thales-blue/php-bank.git
 cd php-banking-api
 
 # Suba os containers
