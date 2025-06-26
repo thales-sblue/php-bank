@@ -51,13 +51,7 @@ cd php-banking-api
 
 # Suba os containers
 docker-compose up --build
-```
 
 # Acesse o sistema
-
 http://localhost:8000/
-
-```
-
-
 ```
