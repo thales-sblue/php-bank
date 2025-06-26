@@ -3,16 +3,17 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <title>Login Bancário</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
-      background-color: #121212;
+      background-color: #0d1117;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -21,82 +22,98 @@
     }
 
     .form-container {
-      background-color: #1e1e1e;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      background-color: #161b22;
+      padding: 50px 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
       width: 400px;
-      color: #f1f1f1;
+      color: #c9d1d9;
+      transition: all 0.3s ease;
     }
 
-    h2 {
+    .form-container:hover {
+      box-shadow: 0 0 60px rgba(0, 255, 170, 0.1);
+    }
+
+    .brand {
       text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #00ffa8;
       margin-bottom: 25px;
-      color: #ffffff;
+    }
+
+    h3 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #e6edf3;
     }
 
     label {
       display: block;
       margin-bottom: 6px;
-      font-weight: 600;
-      color: #e0e0e0;
+      font-weight: 500;
+      color: #8b949e;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background-color: #2a2a2a;
-      color: #f1f1f1;
-      margin-bottom: 18px;
-      transition: border-color 0.3s, background-color 0.3s;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+      background-color: #0d1117;
+      color: #f0f6fc;
+      margin-bottom: 20px;
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
 
     input:focus {
-      border-color: #0077ff;
+      border-color: #00ffa8;
+      background-color: #161b22;
       outline: none;
-      background-color: #333;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      background-color: #0077ff;
-      color: white;
+      padding: 14px;
+      background: linear-gradient(90deg, #00ffa8, #00cc88);
+      color: #0d1117;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: background-color 0.3s;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
-      background-color: #005ecc;
+      transform: translateY(-1px);
+      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
     }
 
     .link-container {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 20px;
+      font-size: 14px;
     }
 
     .link-container a {
-      color: #0077ff;
+      color: #00ffa8;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.3s;
     }
 
     .link-container a:hover {
-      color: #005ecc;
+      color: #00cc88;
     }
 
     .error-message {
-      color: #f44336;
+      color: #ff6b6b;
       text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
+      margin-top: 12px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -104,14 +121,15 @@
 <body>
 
   <div id="app" class="form-container">
-    <h2>Login</h2>
+    <div class="brand">PHP Bank</div>
+    <h3>Acesso ao sistema</h3>
 
     <form @submit.prevent="submitLogin">
-      <label>Username:</label>
-      <input v-model="form.username" type="text" required>
+      <label>Usuário</label>
+      <input v-model="form.username" type="text" placeholder="Digite seu usuário" required>
 
-      <label>Senha:</label>
-      <input v-model="form.password" type="password" required>
+      <label>Senha</label>
+      <input v-model="form.password" type="password" placeholder="Digite sua senha" required>
 
       <button type="submit">Entrar</button>
     </form>
@@ -121,15 +139,13 @@
     </div>
 
     <div class="link-container">
-      <span>Não tem uma conta? </span>
-      <a href="/clients/create">Criar Conta</a>
+      <span>Não possui conta? </span>
+      <a href="/clients/create">Crie uma agora</a>
     </div>
   </div>
 
   <script>
-    const {
-      createApp
-    } = Vue;
+    const { createApp } = Vue;
 
     createApp({
       data() {

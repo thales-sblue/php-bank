@@ -2,13 +2,18 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Transações</title>
+  <title>Transações - Extrato</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
     body {
-      background-color: #121212;
-      color: #f1f1f1;
-      font-family: Arial, sans-serif;
+      background-color: #0d1117;
+      color: #f0f6fc;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,75 +22,97 @@
     }
 
     .dashboard {
-      background-color: #1e1e1e;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-      width: 700px;
+      background-color: #161b22;
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
+      width: 100%;
+      max-width: 750px;
       max-height: 95vh;
       overflow-y: auto;
       text-align: center;
     }
 
     h2 {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      color: #e6edf3;
     }
 
     .accounts {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 25px;
+      gap: 12px;
+      margin-bottom: 30px;
     }
 
     .account-card {
-      background-color: #2a2a2a;
+      background-color: #1f242c;
+      border-left: 6px solid #00ffa8;
       padding: 15px 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       border: 2px solid transparent;
-      transition: all 0.3s ease;
       text-align: left;
+      transition: all 0.3s ease;
     }
 
     .account-card:hover {
-      background-color: #333;
+      background-color: #242c34;
     }
 
     .account-card.active {
-      border-color: rgb(11, 97, 196);
-      background-color: #1d1d1d;
+      border-color: #00cc88;
+      background-color: #1a1f27;
     }
 
     .account-card h3 {
-      margin: 0 0 8px 0;
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #ffffff;
+    }
+
+    .account-card p {
+      margin: 3px 0;
+      font-size: 14px;
+      color: #c9d1d9;
     }
 
     .transactions {
       text-align: left;
+      margin-top: 15px;
+    }
+
+    .transactions h3 {
+      margin-bottom: 15px;
+      color: #00ffa8;
     }
 
     .transaction {
-      background-color: #2a2a2a;
-      padding: 12px 15px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      background-color: #1f242c;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
     }
 
     .transaction p {
-      margin: 4px 0;
+      margin: 5px 0;
+      font-size: 14px;
+      color: #c9d1d9;
     }
 
     .back {
       display: block;
-      margin-top: 15px;
-      color: #ff5f5f;
+      margin-top: 25px;
+      text-align: center;
+      color: #ff6b6b;
+      font-weight: 600;
       text-decoration: none;
-      font-weight: bold;
+      transition: color 0.3s;
     }
 
     .back:hover {
-      color: #ff2f2f;
+      color: #ff3b3b;
     }
   </style>
 </head>
@@ -99,34 +126,36 @@
          class="account-card"
          :class="{ active: selectedAccountId === account.id }"
          @click="selectAccount(account)">
-      <h3>Conta {{ account.type.toUpperCase() }}</h3>
+      <h3>Conta {{ account.type }}</h3>
       <p>Saldo: R$ {{ account.balance.toFixed(2) }}</p>
-      <p>Status: <span :style="{ color: account.active ? 'lightgreen' : 'red' }">
-        {{ account.active ? 'Ativa' : 'Inativa' }}</span></p>
+      <p>Status:
+        <span :style="{ color: account.active ? '#00ffa8' : '#ff4c4c' }">
+          {{ account.active ? 'Ativa' : 'Inativa' }}
+        </span>
+      </p>
     </div>
   </div>
 
   <div v-if="transactions.length > 0" class="transactions">
-    <h3>Transações da Conta {{ selectedAccountType.toUpperCase() }}</h3>
+    <h3>Transações da Conta {{ selectedAccountType }}</h3>
     <div v-for="transaction in transactions" :key="transaction.id" class="transaction">
-      <p>
-        <strong>Tipo:</strong>
+      <p><strong>Tipo:</strong>
         {{ transaction.transfer_id
             ? 'Transferência'
             : transaction.type === 'saque'
             ? 'Saque'
-            : 'Depósito'}}
+            : 'Depósito' }}
       </p>
       <p>
         <strong>{{ transaction.type === 'saque' ? 'Débito' : 'Crédito' }}:</strong>
-        R$ {{ transaction.amount }}
+        R$ {{ Number(transaction.amount).toFixed(2) }}
       </p>
       <p><strong>Data:</strong> {{ formatDate(transaction.created_at) }}</p>
     </div>
   </div>
 
   <div v-else-if="selectedAccountId">
-    <p>Não há transações para esta conta.</p>
+    <p style="margin-top: 20px; color: #8b949e;">Não há transações para esta conta.</p>
   </div>
 
   <a href="/clients/auth" class="back">Voltar</a>

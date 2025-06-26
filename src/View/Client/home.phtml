@@ -4,61 +4,68 @@
   <meta charset="UTF-8">
   <title>Home - Painel do Cliente</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f1115;
-      color: #f1f1f1;
+      background: #0d1117;
+      color: #f0f6fc;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
     }
 
     .dashboard {
-      background: #1a1d23;
-      padding: 40px 50px;
+      background: #161b22;
+      padding: 50px 40px;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
     }
 
     h2 {
       text-align: center;
-      font-size: 28px;
-      margin-bottom: 30px;
-      color: #e0e0e0;
+      font-size: 26px;
+      margin-bottom: 35px;
+      color: #e6edf3;
     }
 
     .account {
-      background: #252a33;
-      border-left: 5px solid lightgreen;
-      padding: 20px;
-      border-radius: 10px;
+      background: #1f242c;
+      border-left: 6px solid #00ffa8;
+      padding: 20px 25px;
+      border-radius: 12px;
       margin-bottom: 20px;
-      transition: border-color 0.3s;
+      transition: all 0.3s ease;
     }
 
     .account.inactive {
       border-color: crimson;
+      opacity: 0.8;
     }
 
     .account h3 {
       margin: 0 0 10px;
-      font-size: 20px;
+      font-size: 18px;
       color: #ffffff;
     }
 
     .account p {
-      margin: 5px 0;
-      color: #ccc;
+      margin: 6px 0;
+      color: #b1b9c1;
+      font-size: 15px;
+    }
+
+    .account span {
+      font-weight: 600;
     }
 
     .buttons {
@@ -66,43 +73,45 @@
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
-      margin-top: 25px;
+      margin-top: 30px;
     }
 
     a.button {
-      background: #0b61c4;
-      color: white;
+      background: linear-gradient(90deg, #00ffa8, #00cc88);
+      color: #0d1117;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: bold;
       text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     a.button:hover {
-      background: #083d75;
       transform: translateY(-2px);
+      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
     }
 
     .empty-message {
       text-align: center;
       font-size: 16px;
-      color: #bbb;
+      color: #8b949e;
+      margin-top: 10px;
     }
 
     .logout {
       display: block;
-      margin-top: 30px;
+      margin-top: 35px;
       text-align: center;
-      color: #ff5f5f;
-      font-weight: bold;
+      color: #ff6b6b;
+      font-weight: 600;
       text-decoration: none;
+      font-size: 15px;
       transition: color 0.3s;
     }
 
     .logout:hover {
-      color: #ff2f2f;
+      color: #ff3b3b;
     }
   </style>
 </head>
@@ -121,7 +130,7 @@
       <h3>Conta {{ account.type }}</h3>
       <p><strong>Saldo:</strong> R$ {{ account.balance.toFixed(2) }}</p>
       <p><strong>Status:</strong>
-        <span :style="{ color: account.active ? 'lightgreen' : 'crimson' }">
+        <span :style="{ color: account.active ? '#00ffa8' : 'crimson' }">
           {{ account.active ? 'Ativa' : 'Inativa' }}
         </span>
       </p>
@@ -146,39 +155,39 @@
 </div>
 
 <script>
-const { createApp } = Vue;
+  const { createApp } = Vue;
 
-createApp({
-  data() {
-    return {
-      client: null,
-      accounts: []
-    }
-  },
-  methods: {
-    async fetchClientData() {
-      try {
-        const response = await fetch('/clients/home');
-        const data = await response.json();
-
-        if (!response.ok || !data.client) {
-          alert(data.error || 'Erro ao carregar dados');
-          window.location.replace('/clients/login');
-          return;
-        }
-
-        this.client = data.client;
-        this.accounts = data.accounts || [];
-      } catch (err) {
-        alert('Erro ao carregar dados');
-        window.location.replace('/clients/login');
+  createApp({
+    data() {
+      return {
+        client: null,
+        accounts: []
       }
+    },
+    methods: {
+      async fetchClientData() {
+        try {
+          const response = await fetch('/clients/home');
+          const data = await response.json();
+
+          if (!response.ok || !data.client) {
+            alert(data.error || 'Erro ao carregar dados');
+            window.location.replace('/clients/login');
+            return;
+          }
+
+          this.client = data.client;
+          this.accounts = data.accounts || [];
+        } catch (err) {
+          alert('Erro ao carregar dados');
+          window.location.replace('/clients/login');
+        }
+      }
+    },
+    mounted() {
+      this.fetchClientData();
     }
-  },
-  mounted() {
-    this.fetchClientData();
-  }
-}).mount('#app');
+  }).mount('#app');
 </script>
 
 </body>
