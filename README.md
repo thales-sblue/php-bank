@@ -1,4 +1,4 @@
-# 💸 PHP Banking API
+# 💸 PHP Bank
 
 ![PHP](https://img.shields.io/badge/language-PHP-blue)
 ![Dockerized](https://img.shields.io/badge/docker-ready-0db7ed)
@@ -6,8 +6,8 @@
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Hits](https://hits.sh/github.com/thales-blue/php-banking-api.svg)
 
-> Uma API REST para operações bancárias básicas, construída com PHP puro, PostgreSQL e Docker.  
-> Criada para estudos, testes de arquitetura e desafios técnicos com controle de saldo e transações seguras.
+> Um sistema para operações bancárias básicas, construída com PHP, VueJs, PostgreSQL e Docker.
+> Criada para estudos, testes de arquitetura e desafios técnicos com controle de saldo e registro de transações.
 
 ---
 
@@ -19,20 +19,21 @@
 - Registro de transações e histórico
 - Registro de transferência entre contas
 - Validação de saldo para saques
+- Extrato de transações e transferências
 - Testes unitários com PHPUnit para garantir a qualidade do código
 - Docker-ready para subir o ambiente com um comando
 
-
 ## 📌 TODO
+
 - Implementar autenticação JWT para proteger rotas e sessões
 - Incluir middlewares para validação e autenticação
-- Documentar rotas com OpenAPI/Swagger
 
 ---
 
 ## 🧰 Tecnologias
 
 - **PHP 8.3**
+- **VueJs**
 - **PostgreSQL**
 - **PDO**
 - **Docker / Docker Compose**
@@ -50,3 +51,13 @@ cd php-banking-api
 
 # Suba os containers
 docker-compose up --build
+```
+
+# Acesse o sistema
+
+http://localhost:8000/
+
+```
+
+
+```
