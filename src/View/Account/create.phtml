@@ -5,104 +5,137 @@
   <meta charset="UTF-8">
   <title>Abrir Conta</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
     body {
-      background-color: #121212;
-      color: #f1f1f1;
-      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0d1117;
+      color: #f0f6fc;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
     }
 
     .form-container {
-      background-color: #1e1e1e;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-      width: 450px;
-      text-align: center;
+      background: #161b22;
+      padding: 50px 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
+      width: 100%;
+      max-width: 500px;
     }
 
     h2 {
-      margin-bottom: 20px;
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 30px;
+      color: #e6edf3;
     }
 
     label {
       display: block;
-      text-align: left;
-      margin-bottom: 5px;
-      font-weight: bold;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #c9d1d9;
     }
 
     input,
     select {
       width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-      background-color: #2a2a2a;
-      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+      margin-bottom: 18px;
+      background-color: #1f242c;
+      color: #ffffff;
     }
 
     button {
       width: 100%;
-      padding: 10px;
-      background-color: #0077ff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 12px;
+      background: linear-gradient(90deg, #00ffa8, #00cc88);
+      color: #0d1117;
       font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     button:hover {
-      background-color: #005ecc;
+      transform: translateY(-2px);
+      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
     }
 
     .back {
       display: block;
-      margin-top: 15px;
-      color: #ff5f5f;
+      margin-top: 25px;
+      text-align: center;
+      color: #ff6b6b;
+      font-weight: 600;
       text-decoration: none;
-      font-weight: bold;
+      font-size: 15px;
+      transition: color 0.3s;
     }
 
     .back:hover {
-      color: #ff2f2f;
+      color: #ff3b3b;
     }
 
     .client-info {
-      background-color: #2a2a2a;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      text-align: left;
+      background-color: #1f242c;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
     }
 
     .client-info p {
-      margin: 5px 0;
+      margin: 8px 0;
+      color: #b1b9c1;
+      font-size: 15px;
+    }
+
+    .client-info strong {
+      color: #ffffff;
+    }
+
+    .status-message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .status-message.success {
+      color: #00ffa8;
+    }
+
+    .status-message.error {
+      color: crimson;
     }
   </style>
 </head>
 
 <body>
-
   <div id="app" class="form-container">
     <h2>Abrir Conta</h2>
 
     <div class="client-info" v-if="client">
-      <p><strong>Id:</strong> {{ client.id }}</p>
+      <p><strong>ID:</strong> {{ client.id }}</p>
       <p><strong>Nome:</strong> {{ client.name }}</p>
       <p><strong>CPF/CNPJ:</strong> {{ client.cpfcnpj }}</p>
       <p><strong>Email:</strong> {{ client.email }}</p>
     </div>
 
     <form @submit.prevent="submitForm">
-      <label for="type">Tipo de Conta:</label>
+      <label for="type">Tipo de Conta</label>
       <select v-model="form.type" required>
         <option value="">Selecione</option>
         <option value="corrente">Corrente</option>
@@ -112,13 +145,8 @@
       <button type="submit">Abrir Conta</button>
     </form>
 
-    <div v-if="success" style="margin-top: 15px; color: lightgreen;">
-      {{ success }}
-    </div>
-
-    <div v-if="error" style="margin-top: 15px; color: red;">
-      {{ error }}
-    </div>
+    <div v-if="success" class="status-message success">{{ success }}</div>
+    <div v-if="error" class="status-message error">{{ error }}</div>
 
     <a href="/clients/auth" class="back">Voltar</a>
   </div>
@@ -131,7 +159,7 @@
         return {
           client: null,
           form: {
-            type: '',
+            type: ''
           },
           success: '',
           error: ''
@@ -145,7 +173,7 @@
 
             if (!response.ok || !data.client) {
               alert(data.error || 'Erro ao carregar dados');
-              window.location.href = '/login';
+              window.location.href = '/clients/login';
               return;
             }
 
@@ -154,10 +182,9 @@
             if (data.accounts && data.accounts.length > 2) {
               window.location.href = '/home';
             }
-
           } catch (err) {
             alert('Erro ao carregar dados');
-            window.location.href = '/login';
+            window.location.href = '/clients/login';
           }
         },
 
@@ -169,7 +196,7 @@
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                client_id: this.form.id,
+                client_id: this.client.id,
                 type: this.form.type,
                 balance: 0
               })
@@ -198,7 +225,6 @@
       }
     }).mount('#app');
   </script>
-
 </body>
 
 </html>

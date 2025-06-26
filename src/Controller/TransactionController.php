@@ -54,7 +54,7 @@ class TransactionController
                     }
 
                     Response::sendJson([
-                        'message' => 'Transação efetivada com sucesso!.',
+                        'message' => 'Transação efetivada com sucesso!',
                         'transaction' => $transaction
                     ], 201);
                     break;

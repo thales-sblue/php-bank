@@ -129,7 +129,7 @@
     >
       <h3>Conta {{ account.type }}</h3>
       <p><strong>Saldo:</strong> R$ {{ account.balance.toFixed(2) }}</p>
-      <p><strong>Status:</strong>
+      <p><strong>Status: </strong>
         <span :style="{ color: account.active ? '#00ffa8' : 'crimson' }">
           {{ account.active ? 'Ativa' : 'Inativa' }}
         </span>
