@@ -30,19 +30,23 @@ return [
     ['GET',  '/clients/{id}',        [$clientController, 'show']],
     ['POST', '/clients',             [$clientController, 'create']],
     ['PUT',  '/clients/{id}',        [$clientController, 'update']],
-    // ['GET',  '/logout',              function () {
-    //     \Thales\PhpBanking\resources\Session::destroy();
-    //     header('Location: /clients/login');
-    //     exit;
-    // }],
+    ['GET',  '/logout',              function () {
+        \Thales\PhpBanking\resources\Session::destroy();
+        header('Location: /clients/login');
+        exit;
+    }],
 
-    ['GET',  '/accounts',            [$accountController, 'index']],
-    ['POST', '/accounts',            [$accountController, 'create']],
-    ['GET',  '/accounts/create',     [$accountController, 'createForm']],
-    ['GET',  '/accounts/{id}',       [$accountController, 'show']],
-    ['PUT',  '/accounts/{id}',       [$accountController, 'update']],
+    ['GET',  '/accounts/create', [$accountController, 'createForm']],
+    ['GET',  '/accounts',        [$accountController, 'index']],
+    ['GET',  '/accounts/{id}',   [$accountController, 'show']],
+    ['POST', '/accounts',        [$accountController, 'create']],
+    ['PUT',  '/accounts/{id}',   [$accountController, 'update']],
 
-    ['POST', '/transactions',        [$transactionController, 'create']],
+    ['GET',  '/transactions',    [$transactionController, 'createForm']],
+    ['GET',  '/transactions/extracts',  [$transactionController, 'extractForm']],
+    ['GET',  '/transactions/{accountId}', [$transactionController, 'showByAccount']],
+    ['POST', '/transactions/create',           [$transactionController, 'create']],
 
-    ['POST', '/transfers',           [$transferController, 'create']],
+    ['GET',  '/transfers', [$transferController, 'createForm']],
+    ['POST', '/transfers/create',        [$transferController, 'create']],
 ];
