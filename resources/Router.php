@@ -6,7 +6,7 @@ class Router
 {
     private array $routes = [];
 
-    public function add(string $method, string $pattern, callable $handler): void
+    public function add(string $method, string $pattern, $handler): void
     {
         $this->routes[] = [
             'method' => strtoupper($method),
@@ -18,22 +18,30 @@ class Router
     public function dispatch(string $method, string $uri): void
     {
         $uri = parse_url($uri, PHP_URL_PATH);
+        $method = strtoupper($method);
 
         foreach ($this->routes as $route) {
-            if ($method === $route['method'] && preg_match($route['pattern'], $uri, $matches)) {
+            if (
+                $method === $route['method'] &&
+                preg_match($route['pattern'], $uri, $matches)
+            ) {
                 array_shift($matches);
-                call_user_func_array($route['handler'], $matches);
+                $args = array_values(array_filter($matches, 'is_int', ARRAY_FILTER_USE_KEY));
+                call_user_func_array($route['handler'], $args);
                 return;
             }
         }
 
-        http_response_code(404);
-        echo json_encode(['error' => 'Rota não encontrada']);
+        header('Location: /clients/login');
+        exit;
     }
 
     private function convertPattern(string $pattern): string
     {
-        $pattern = preg_replace('#\{[a-zA-Z_][a-zA-Z0-9_]*\}#', '([^/]+)', $pattern);
+        $pattern = preg_replace_callback('#\{([a-zA-Z_][a-zA-Z0-9_]*)\}#', function ($matches) {
+            return '(?<' . $matches[1] . '>[^/]+)';
+        }, $pattern);
+
         return '#^' . rtrim($pattern, '/') . '/?$#';
     }
 }

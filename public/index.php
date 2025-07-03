@@ -2,22 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Thales\PhpBanking\Model\Account\AccountRepository;
-use Thales\PhpBanking\Service\AccountService;
-use Thales\PhpBanking\Controller\AccountController;
-
-use Thales\PhpBanking\Model\Client\ClientRepository;
-use Thales\PhpBanking\Service\ClientService;
-use Thales\PhpBanking\Controller\ClientController;
-
-use Thales\PhpBanking\Model\Transaction\TransactionRepository;
-use Thales\PhpBanking\Service\TransactionService;
-use Thales\PhpBanking\Controller\TransactionController;
-
-use Thales\PhpBanking\Model\Transfer\TransferRepository;
-use Thales\PhpBanking\Service\TransferService;
-use Thales\PhpBanking\Controller\TransferController;
-use Thales\PhpBanking\resources\Session;
+use Thales\PhpBanking\resources\Router;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -56,62 +41,11 @@ register_shutdown_function(function () {
     }
 });
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = explode('/', $uri);
-$route = $uri[1] ?? '';
+$routes = require __DIR__ . '/../resources/Routes.php';
 
-switch ($route) {
-    case 'clients':
-        $repository = new ClientRepository();
-        $service = new ClientService($repository);
-        $controller = new ClientController($service);
-        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
-        break;
-
-    case 'accounts':
-        $repository = new AccountRepository();
-        $service = new AccountService($repository);
-        $controller = new AccountController($service);
-        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
-        break;
-
-    case 'transactions':
-        $accountRepository = new AccountRepository();
-        $accountService = new AccountService($accountRepository);
-
-        $transactionRepository = new TransactionRepository();
-        $transactionService = new TransactionService($transactionRepository, $accountService);
-
-        $controller = new TransactionController($transactionService);
-        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
-        break;
-
-    case 'transfers':
-        $transferRepository = new TransferRepository();
-        $transactionRepository = new TransactionRepository();
-        $accountRepository = new AccountRepository();
-
-        $accountService = new AccountService($accountRepository);
-        $transactionService = new TransactionService($transactionRepository, $accountService);
-        $transferService = new TransferService($transferRepository, $transactionService, $accountService);
-
-        $controller = new TransferController($transferService);
-        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
-        break;
-
-    case 'logout':
-        Session::destroy();
-        $repository = new ClientRepository();
-        $service = new ClientService($repository);
-        $controller = new ClientController($service);
-        $uri = [];
-        $uri[0] = 'logout';
-        $uri[1] = 'clients';
-        $uri[2] = 'login';
-        $controller->handleRequest($_SERVER['REQUEST_METHOD'], $uri);
-        break;
-
-    default:
-        header('Location: /clients/login');
-        break;
+$router = new Router();
+foreach ($routes as [$method, $path, $handler]) {
+    $router->add($method, $path, $handler);
 }
+
+$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
