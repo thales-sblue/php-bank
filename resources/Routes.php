@@ -44,9 +44,10 @@ return [
 
     ['GET',  '/transactions',    [$transactionController, 'createForm']],
     ['GET',  '/transactions/extracts',  [$transactionController, 'extractForm']],
+    ['POST', '/transactions',           [$transactionController, 'create']],
     ['GET',  '/transactions/{accountId}', [$transactionController, 'showByAccount']],
-    ['POST', '/transactions/create',           [$transactionController, 'create']],
+
 
     ['GET',  '/transfers', [$transferController, 'createForm']],
-    ['POST', '/transfers/create',        [$transferController, 'create']],
+    ['POST', '/transfers',        [$transferController, 'create']],
 ];
