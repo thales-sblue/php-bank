@@ -39,9 +39,15 @@
       </div>
     </form>
 
-    <div v-if="success" class="success-message">
+
+    <div v-if="success" class="status-message success">
       {{ success }}
     </div>
+
+    <div v-if="error" class="status-message error">
+      {{ error }}
+    </div>
+
   </div>
 </body>
 
