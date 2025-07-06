@@ -4,171 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Transações - Painel do Cliente</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: #0d1117;
-      color: #f0f6fc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .form-container {
-      background-color: #161b22;
-      padding: 40px 50px;
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
-      width: 100%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #e6edf3;
-    }
-
-    .client-info {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .client-info p {
-      margin: 4px 0;
-      font-size: 15px;
-      color: #8b949e;
-    }
-
-    .accounts {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .account-card {
-      background-color: #1f242c;
-      border-left: 6px solid #00ffa8;
-      padding: 15px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-
-    .account-card:hover {
-      background-color: #242c34;
-    }
-
-    .account-card.active {
-      border-color: #00cc88;
-      background-color: #1a1f27;
-    }
-
-    .account-card h3 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-      color: #ffffff;
-    }
-
-    .account-card p {
-      margin: 0;
-      color: #c9d1d9;
-      font-size: 14px;
-    }
-
-    form label {
-      display: block;
-      text-align: left;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #8b949e;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    select,
-    input[type="number"] {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #30363d;
-      background-color: #0d1117;
-      color: #f0f6fc;
-      font-size: 15px;
-      transition: border 0.3s ease;
-    }
-
-    select:focus,
-    input:focus {
-      outline: none;
-      border-color: #00ffa8;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(90deg, #00ffa8, #00cc88);
-      color: #0d1117;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
-    }
-
-    .feedback {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .success {
-      color: #00ffa8;
-      font-weight: 600;
-    }
-
-    .error {
-      color: #ff6b6b;
-      font-weight: 600;
-    }
-
-    .back {
-      display: block;
-      margin-top: 25px;
-      text-align: center;
-      color: #ff6b6b;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-
-    .back:hover {
-      color: #ff3b3b;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="/static/js/transaction/create.js" defer></script>
 </head>
 
 <body>
@@ -185,8 +24,8 @@
       <label>Selecione a Conta:</label>
       <div class="accounts">
         <div v-for="account in accounts" :key="account.id" class="account-card"
-             :class="{ active: form.accountId === account.id }"
-             @click="selectAccount(account.id)">
+          :class="{ active: form.accountId === account.id }"
+          @click="selectAccount(account.id)">
           <h3>Conta {{ account.type }}</h3>
           <p>Saldo: R$ {{ account.balance.toFixed(2) }}</p>
         </div>
@@ -211,95 +50,17 @@
       <button type="submit">Realizar Transação</button>
     </form>
 
-    <div class="feedback">
-      <div v-if="success" class="success">{{ success }}</div>
-      <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="success" class="status-message success">
+      {{ success }}
+    </div>
+
+    <div v-if="error" class="status-message error">
+      {{ error }}
     </div>
 
     <a href="/clients/auth" class="back">Voltar</a>
   </div>
 
-  <script>
-    const { createApp } = Vue;
-
-    createApp({
-      data() {
-        return {
-          client: null,
-          accounts: [],
-          form: {
-            accountId: '',
-            type: '',
-            amount: ''
-          },
-          success: '',
-          error: ''
-        }
-      },
-      methods: {
-        async fetchClientData() {
-          try {
-            const response = await fetch('/clients/home');
-            const data = await response.json();
-
-            if (!response.ok || !data.client) {
-              alert(data.error || 'Erro ao carregar dados');
-              window.location.replace('/clients/login');
-              return;
-            }
-
-            this.client = data.client;
-            this.accounts = data.accounts || [];
-          } catch (err) {
-            alert('Erro ao carregar dados');
-            window.location.replace('/clients/login');
-          }
-        },
-
-        selectAccount(id) {
-          this.form.accountId = this.form.accountId === id ? '' : id;
-        },
-
-        async submitTransaction() {
-          this.success = '';
-          this.error = '';
-
-          try {
-            const response = await fetch('/transactions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                accountId: this.form.accountId,
-                type: this.form.type,
-                amount: parseFloat(this.form.amount)
-              })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-              this.success = data.message || 'Transação realizada com sucesso!';
-              this.error = '';
-              this.form = { accountId: '', type: '', amount: '' };
-              this.fetchClientData();
-            } else {
-              this.success = '';
-              this.error = data.details || data.error || 'Erro na transação';
-            }
-
-          } catch (err) {
-            this.success = '';
-            this.error = 'Erro na requisição';
-          }
-        }
-      },
-      mounted() {
-        this.fetchClientData();
-      }
-    }).mount('#app');
-  </script>
-
 </body>
+
 </html>

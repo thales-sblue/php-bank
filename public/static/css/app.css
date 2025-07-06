@@ -1,0 +1,318 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #f0f6fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-container,
+.dashboard {
+    background: #161b22;
+    padding: 50px 40px;
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
+    width: 100%;
+    max-width: 500px;
+    color: #c9d1d9;
+    transition: all 0.3s ease;
+}
+
+.dashboard {
+    max-width: 750px;
+}
+
+.form-container:hover,
+.dashboard:hover {
+    box-shadow: 0 0 60px rgba(0, 255, 170, 0.1);
+}
+
+.brand {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #00ffa8;
+    margin-bottom: 25px;
+}
+
+h2,
+h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #e6edf3;
+    font-size: 26px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #c9d1d9;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #30363d;
+    margin-bottom: 18px;
+    background-color: #1f242c;
+    color: #ffffff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #00ffa8;
+    background-color: #161b22;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #00ffa8, #00cc88);
+    color: #0d1117;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+}
+
+a.button {
+    background: linear-gradient(90deg, #00ffa8, #00cc88);
+    color: #0d1117;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+a.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+}
+
+.status-message {
+    margin-top: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    width: 100%;
+}
+
+.status-message.success {
+    background-color: rgba(0, 255, 170, 0.1);
+    border: 1px solid #00ffa8;
+    color: #00ffa8;
+}
+
+.status-message.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid crimson;
+    color: crimson;
+}
+
+.link-container {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.link-container a {
+    color: #00ffa8;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.link-container a:hover {
+    color: #00cc88;
+}
+
+.back,
+.logout {
+    display: block;
+    margin-top: 25px;
+    text-align: center;
+    color: #ff6b6b;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s;
+}
+
+.logout {
+    margin-top: 35px;
+}
+
+.back:hover,
+.logout:hover {
+    color: #ff3b3b;
+}
+
+.client-info {
+    background-color: #1f242c;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.client-info p {
+    margin: 8px 0;
+    color: #b1b9c1;
+    font-size: 15px;
+}
+
+.client-info strong {
+    color: #ffffff;
+}
+
+.account {
+    background: #1f242c;
+    border-left: 6px solid #00ffa8;
+    padding: 20px 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.account.inactive {
+    border-color: crimson;
+    opacity: 0.8;
+}
+
+.account h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #ffffff;
+    text-align: left;
+}
+
+.account p {
+    margin: 6px 0;
+    color: #b1b9c1;
+    font-size: 15px;
+}
+
+.account span {
+    font-weight: 600;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.empty-message {
+    text-align: center;
+    font-size: 16px;
+    color: #8b949e;
+    margin-top: 10px;
+}
+
+.account-card {
+    background-color: #1f242c;
+    border-left: 6px solid #00ffa8;
+    padding: 15px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.account-card:hover {
+    background-color: #242c34;
+}
+
+.account-card.active {
+    border-color: #00cc88;
+    background-color: #1a1f27;
+}
+
+.account-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #ffffff;
+    text-align: left;
+}
+
+.account-card p {
+    margin: 0;
+    color: #c9d1d9;
+    font-size: 14px;
+}
+
+.accounts,
+.destination-accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.transactions {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.transaction-card {
+    background-color: #1f242c;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 6px solid #00ffa8;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.transaction-card:hover {
+    background-color: #242c34;
+}
+
+.transaction-info p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #c9d1d9;
+}
+
+.transaction-info strong {
+    color: #e6edf3;
+}

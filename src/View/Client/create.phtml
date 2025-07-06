@@ -4,123 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Cadastro de Cliente</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: #0d1117;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .form-container {
-      background-color: #161b22;
-      padding: 50px 40px;
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
-      width: 400px;
-      color: #c9d1d9;
-      transition: all 0.3s ease;
-    }
-
-    .form-container:hover {
-      box-shadow: 0 0 60px rgba(0, 255, 170, 0.1);
-    }
-
-    .brand {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      color: #00ffa8;
-      margin-bottom: 25px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #e6edf3;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: #8b949e;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #30363d;
-      background-color: #0d1117;
-      color: #f0f6fc;
-      margin-bottom: 20px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    input:focus {
-      border-color: #00ffa8;
-      background-color: #161b22;
-      outline: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(90deg, #00ffa8, #00cc88);
-      color: #0d1117;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
-    }
-
-    .success-message {
-      margin-top: 20px;
-      color: #00ffa8;
-      text-align: center;
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .link-container {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-
-    .link-container a {
-      color: #00ffa8;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-
-    .link-container a:hover {
-      color: #00cc88;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="/static/js/client/create.js" defer></script>
 </head>
 
 <body>
-
   <div id="app" class="form-container">
     <div class="brand">PHP Bank</div>
     <h2>Cadastro de Cliente</h2>
@@ -153,59 +43,6 @@
       {{ success }}
     </div>
   </div>
-
-  <script>
-    const { createApp } = Vue;
-
-    createApp({
-      data() {
-        return {
-          form: {
-            username: '',
-            password: '',
-            name: '',
-            cpfcnpj: '',
-            email: ''
-          },
-          success: ''
-        }
-      },
-      methods: {
-        async submitForm() {
-          try {
-            const response = await fetch('/clients', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(this.form)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-              this.success = data.message || 'Cadastro realizado com sucesso!';
-              this.form = {
-                username: '',
-                password: '',
-                name: '',
-                cpfcnpj: '',
-                email: ''
-              };
-              setTimeout(() => {
-                window.location.replace('/clients/login');
-              }, 1500);
-            } else {
-              alert(data.error || 'Erro ao cadastrar');
-            }
-          } catch (error) {
-            alert('Erro na requisição');
-          }
-        }
-      }
-    }).mount('#app');
-  </script>
-
 </body>
 
 </html>

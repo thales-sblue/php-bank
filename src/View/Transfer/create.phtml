@@ -4,323 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <title>Transferência - Painel do Cliente</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="/static/css/app.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: #0d1117;
-      color: #f0f6fc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .form-container {
-      background-color: #161b22;
-      padding: 40px 50px;
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05);
-      width: 100%;
-      max-width: 650px;
-      max-height: 95vh;
-      overflow-y: auto;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #e6edf3;
-    }
-
-    .client-info {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .client-info p {
-      margin: 4px 0;
-      font-size: 15px;
-      color: #8b949e;
-    }
-
-    label {
-      display: block;
-      margin: 20px 0 8px;
-      font-weight: 600;
-      color: #8b949e;
-    }
-
-    .accounts,
-    .destination-accounts {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .account-card {
-      background-color: #1f242c;
-      border-left: 6px solid #00ffa8;
-      padding: 15px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-
-    .account-card:hover {
-      background-color: #242c34;
-    }
-
-    .account-card.active {
-      border-color: #00cc88;
-      background-color: #1a1f27;
-    }
-
-    .account-card h4 {
-      margin: 0 0 6px;
-      font-size: 16px;
-      color: #ffffff;
-    }
-
-    .account-card p {
-      margin: 0;
-      font-size: 14px;
-      color: #c9d1d9;
-    }
-
-    select,
-    input[type="number"] {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #30363d;
-      background-color: #0d1117;
-      color: #f0f6fc;
-      font-size: 15px;
-      transition: border 0.3s ease;
-    }
-
-    select:focus,
-    input:focus {
-      outline: none;
-      border-color: #00ffa8;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 25px;
-      background: linear-gradient(90deg, #00ffa8, #00cc88);
-      color: #0d1117;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
-    }
-
-    .feedback {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .success {
-      color: #00ffa8;
-      font-weight: 600;
-    }
-
-    .error {
-      color: #ff6b6b;
-      font-weight: 600;
-    }
-
-    .back {
-      display: block;
-      margin-top: 25px;
-      text-align: center;
-      color: #ff6b6b;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-
-    .back:hover {
-      color: #ff3b3b;
-    }
-  </style>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="/static/js/transfer/create.js" defer></script>
 </head>
 
 <body>
 
-<div id="app" class="form-container">
-  <h2>Transferência</h2>
+  <div id="app" class="form-container">
+    <h2>Transferência</h2>
 
-  <div v-if="client" class="client-info">
-    <p><strong>Cliente:</strong> {{ client.name }}</p>
-    <p><strong>CPF/CNPJ:</strong> {{ client.cpfcnpj }}</p>
-  </div>
-
-  <form @submit.prevent="submitTransfer">
-
-    <label>Conta de Origem:</label>
-    <div class="accounts">
-      <div v-for="account in accounts" :key="account.id"
-           class="account-card"
-           :class="{ active: form.fromAccountId === account.id }"
-           @click="form.fromAccountId = account.id">
-        <h4>Conta {{ account.type }}</h4>
-        <p>Saldo: R$ {{ account.balance.toFixed(2) }}</p>
-      </div>
+    <div v-if="client" class="client-info">
+      <p><strong>Cliente:</strong> {{ client.name }}</p>
+      <p><strong>CPF/CNPJ:</strong> {{ client.cpfcnpj }}</p>
     </div>
 
-    <label>Usuário de Destino:</label>
-    <select v-model="selectedUserId" @change="fetchUserAccounts">
-      <option disabled value="">Selecione um usuário</option>
-      <option v-for="user in users" :key="user.id" :value="user.id">
-        {{ user.name }} - CPF: {{ user.cpfcnpj }}
-      </option>
-    </select>
-
-    <label>Conta de Destino:</label>
-    <div class="destination-accounts" v-if="destinationAccounts.length">
-      <div v-for="account in destinationAccounts" :key="account.id"
-           class="account-card"
-           :class="{ active: form.toAccountId === account.id }"
-           @click="form.toAccountId = account.id">
-        <h4>Conta {{ account.type }}</h4>
-        <p>ID Conta: {{ account.id }}</p>
+    <form @submit.prevent="submitTransfer">
+      <label>Conta de Origem:</label>
+      <div class="accounts">
+        <div v-for="account in accounts" :key="account.id"
+          class="account-card"
+          :class="{ active: form.fromAccountId === account.id }"
+          @click="form.fromAccountId = account.id">
+          <h4>Conta {{ account.type }}</h4>
+          <p>Saldo: R$ {{ account.balance.toFixed(2) }}</p>
+        </div>
       </div>
-    </div>
 
-    <label>Valor da Transferência:</label>
-    <input type="number" v-model="form.amount" required min="1" step="0.01">
+      <label>Usuário de Destino:</label>
+      <select v-model="selectedUserId" @change="fetchUserAccounts" required>
+        <option disabled value="">Selecione um usuário</option>
+        <option v-for="user in users" :key="user.id" :value="user.id">
+          {{ user.name }} - CPF: {{ user.cpfcnpj }}
+        </option>
+      </select>
 
-    <button type="submit">Realizar Transferência</button>
-  </form>
+      <label>Conta de Destino:</label>
+      <div class="destination-accounts" v-if="destinationAccounts.length">
+        <div v-for="account in destinationAccounts" :key="account.id"
+          class="account-card"
+          :class="{ active: form.toAccountId === account.id }"
+          @click="form.toAccountId = account.id">
+          <h4>Conta {{ account.type }}</h4>
+          <p>ID Conta: {{ account.id }}</p>
+        </div>
+      </div>
 
-  <div class="feedback">
-    <div v-if="success" class="success">{{ success }}</div>
-    <div v-if="error" class="error">{{ error }}</div>
+      <label>Valor da Transferência:</label>
+      <input type="number" v-model="form.amount" required min="1" step="0.01">
+
+      <button type="submit">Realizar Transferência</button>
+    </form>
+
+    <div v-if="success" class="status-message success">{{ success }}</div>
+    <div v-if="error" class="status-message error">{{ error }}</div>
+
+    <a href="/clients/auth" class="back">Voltar</a>
   </div>
-
-  <a href="/clients/auth" class="back">Voltar</a>
-</div>
-
-<script>
-const { createApp } = Vue;
-
-createApp({
-  data() {
-    return {
-      client: null,
-      accounts: [],
-      destinationAccounts: [],
-      users: [],
-      selectedUserId: '',
-      form: {
-        fromAccountId: '',
-        toAccountId: '',
-        amount: ''
-      },
-      success: '',
-      error: ''
-    }
-  },
-  methods: {
-    async fetchClientData() {
-      try {
-        const response = await fetch('/clients/home');
-        const data = await response.json();
-        if (!response.ok || !data.client) {
-          window.location.replace('/clients/login');
-          return;
-        }
-        this.client = data.client;
-        this.accounts = data.accounts || [];
-      } catch {
-        this.error = 'Erro ao carregar seus dados';
-      }
-    },
-
-    async fetchAllUsers() {
-      try {
-        const response = await fetch('/clients');
-        const data = await response.json();
-        this.users = data;
-      } catch {
-        this.error = 'Erro ao carregar lista de usuários';
-      }
-    },
-
-    async fetchUserAccounts() {
-      try {
-        this.error = '';
-        this.destinationAccounts = '';
-        this.form.toAccountId = '';
-        const response = await fetch(`/accounts/${this.selectedUserId}`);
-        const data = await response.json();
-
-        if (response.ok) {
-          this.destinationAccounts = data;
-        } else {
-          this.error = data.details || data.error;
-        }
-      } catch {
-        this.error = 'Erro ao carregar contas do usuário';
-      }
-    },
-
-    async submitTransfer() {
-      this.success = '';
-      this.error = '';
-
-      try {
-        const response = await fetch('/transfers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fromAccountId: this.form.fromAccountId,
-            toAccountId: this.form.toAccountId,
-            amount: parseFloat(this.form.amount)
-          })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          this.success = data.message;
-          this.form = { fromAccountId: '', toAccountId: '', amount: '' };
-          this.destinationAccounts = [];
-          this.selectedUserId = '';
-          this.fetchClientData();
-        } else {
-          this.error = data.details || data.error || 'Erro na transferência';
-        }
-      } catch {
-        this.error = 'Erro na requisição';
-      }
-    }
-  },
-  mounted() {
-    this.fetchClientData();
-    this.fetchAllUsers();
-  }
-}).mount('#app');
-</script>
 
 </body>
+
 </html>
